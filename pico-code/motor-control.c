@@ -6,7 +6,9 @@
 #include "include/motor.h"
 #include "include/pid.h"
 #include "include/ma.h"
-#include "include/uart.h"
+#include "include/kinematics.h"
+#include "include/keyboard.h"
+//#include "include/uart.h"
 
 #define SAMPLING_INTERVAL_US 2000 
 
@@ -35,13 +37,20 @@ int main()
 
         // initialize all encoder channels 
         encoder_init();
+        gpio_encoder_map_init();
         
         // initialize PID controllers according to wheel_pid_gains
         PIDController wheel_pid[WHEEL_COUNT]; 
         pid_init_all(wheel_pid); 
 
         float pid_outputs[WHEEL_COUNT] = {0};
-        int16_t rpm_setpoints[WHEEL_COUNT] = {0};
+
+        // set a robot velocity 
+        robot_velocities_t robo_v = {0.0f, 0.0f, 0.0f};
+        robot_velocities_t robo_v_calc = {0, 0, 0};
+
+        float mps_setpoints[WHEEL_COUNT] = {0};
+        float rpm_setpoints[WHEEL_COUNT] = {0};
 
         // initialize moving average filters
         runningAverageFilter ma_filt[WHEEL_COUNT]; 
@@ -54,6 +63,7 @@ int main()
         while(true)
         {
                 // continually read from UART and update expected expected motor speed setpoints if full packet is recieved
+                /*
                 if(rx_flag)
                 {
                         rx_flag = false;
@@ -62,24 +72,28 @@ int main()
                                 extract_speed_packet(rpm_setpoints, WHEEL_COUNT);
                         }
                 }
+                */
+                check_keyboard_stroke(&robo_v);
 
                 if(sampling_flag)
                 {
-                        
                         // at every sampling interval, compute the current rpm  
                         sampling_flag = false;
                         calculate_rpms(motor_rpm_per_sample);
 
+                        // compute inverse kinematics for wheels
+                        solve_mecanum_ik(&robo_v, rpm_setpoints);
+                        
                         // update running average filter outputs
                         running_average_update_all(ma_filt, motor_rpm_per_sample, ma_filt_out, WHEEL_COUNT);
-        
+                        
                         // compute pid outputs for each motor
                         pid_controller_update_all(wheel_pid, rpm_setpoints, motor_rpm_per_sample, pid_outputs); 
                         // write the duty cycle and pwm state to each motor
-                        set_motor_pwm_channels(pid_outputs);
+                        set_motor_pwm_channels(pid_outputs); 
 
                         // send calculated speed information back over UART
-                        send_speed_packet(motor_rpm_per_sample, WHEEL_COUNT);
+                        //send_speed_packet(motor_rpm_per_sample, WHEEL_COUNT);
                 }
         }
 }

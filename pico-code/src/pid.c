@@ -76,10 +76,10 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
         return pid->output;
 }
 
-void pid_controller_update_all(PIDController *all_pids, int16_t *setpoints, float *process_variables, float *pid_outputs)
+void pid_controller_update_all(PIDController *all_pids, float *setpoints, float *process_variables, float *pid_outputs)
 {
         for(int i = 0; i < WHEEL_COUNT; i++)
         {
-                pid_outputs[i] = pid_controller_update(&all_pids[i], (float)setpoints[i], process_variables[i]); 
+                pid_outputs[i] = pid_controller_update(&all_pids[i], setpoints[i], process_variables[i]); 
         }
 }

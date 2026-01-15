@@ -7,11 +7,13 @@
 // So, for the encoder A counts seen by the gearbox output, we have (64 / 2) * 18.75 = 600
 // -------------------------------------- DEFINES -----------------------------------------------------
 
-extern volatile int64_t cumulative_encoderA_counts[WHEEL_COUNT]; 
-extern volatile int64_t encoderA_counts_since_last_sample[WHEEL_COUNT]; 
+extern volatile int64_t cumulative_encoder_counts[WHEEL_COUNT]; 
+extern volatile int64_t previous_encoder_counts[WHEEL_COUNT]; 
+extern int8_t gpio_to_encoder_map[MAX_GPIO];
+extern int8_t gpio_to_motor_ch[MAX_GPIO];
 
 #define GEAR_RATIO 18.75f
-#define COUNTS_PER_REVOULTION 600 // counting only level changes on 1 channel 
+#define COUNTS_PER_REVOULTION 1200.0f // counting only level changes on both channels 
 
 // ---------------------------------- FUNCTION PROTOTYPES ---------------------------------------------
 /*
@@ -24,3 +26,8 @@ void encoder_init();
         Calculates the rpm of a single motor
 */
 void calculate_rpms(float* rpms);
+
+/*
+        // maps gpio pins (as array index) to encoder channels assigned in pinout 
+*/
+void gpio_encoder_map_init();

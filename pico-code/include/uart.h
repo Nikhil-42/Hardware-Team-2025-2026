@@ -43,7 +43,6 @@ void extract_speed_packet(int16_t *buf, int N);
 */
 bool check_full_uart_packet(); 
 
-
 /*
         given a buffer of rpms, create and transmit the UART packet
 */

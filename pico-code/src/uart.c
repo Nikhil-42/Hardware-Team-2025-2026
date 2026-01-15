@@ -27,8 +27,8 @@ void uart0_rx_isr()
 void uart0_init()
 {
         // configure GPIO 0 and 1 to be UART 0 TX and RX
-        gpio_set_function(0, UART_FUNCSEL_NUM(uart0, 0));
-        gpio_set_function(1, UART_FUNCSEL_NUM(uart0, 1));
+        //gpio_set_function(0, UART_FUNCSEL_NUM(uart0, 0));
+        //gpio_set_function(1, UART_FUNCSEL_NUM(uart0, 1));
 
         // set the baud rate of the uart channel
         uart_init(uart0, UART0_BAUD); 

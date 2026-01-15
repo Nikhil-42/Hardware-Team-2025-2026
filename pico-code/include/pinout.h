@@ -3,6 +3,7 @@
 
 // ----------------------------------- MOTOR PINMAPPING -----------------------------------------------
 #define WHEEL_COUNT 4
+#define MAX_GPIO 29 // 0 - 28
 enum WheelPosition {FL, FR, RL, RR};
 
 typedef struct MotorChannel
