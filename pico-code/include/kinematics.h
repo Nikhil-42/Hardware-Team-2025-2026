@@ -10,8 +10,8 @@
 #define Lx 0.2f // [m] half distance between front wheels
 #define Ly 0.2f // [m] half distance between front and rear wheel
 
-extern const float ik_matrix[4][3];
-extern const float fk_matrix[3][4];
+//extern const float ik_matrix[4][3];
+//extern const float fk_matrix[3][4];
 
 typedef struct robot_velocities_t {
         float vx; // [m/s]

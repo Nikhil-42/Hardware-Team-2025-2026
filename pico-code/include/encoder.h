@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "pinout.h"
+#include "pico/types.h"
 
 // The quadrature encoder on the 18.75:1 DC motors provides 64 counts per revolution of the motor shaft when counting 
 // both edges of both channels. Currently the code counts both edges on 1 channel
@@ -8,12 +9,17 @@
 // -------------------------------------- DEFINES -----------------------------------------------------
 
 extern volatile int64_t cumulative_encoder_counts[WHEEL_COUNT]; 
-extern volatile int64_t previous_encoder_counts[WHEEL_COUNT]; 
+extern volatile int64_t previous_encoder_counts[WHEEL_COUNT];
+extern volatile int32_t encoder_counts_difference[WHEEL_COUNT]; 
 extern int8_t gpio_to_encoder_map[MAX_GPIO];
 extern int8_t gpio_to_motor_ch[MAX_GPIO];
+extern volatile absolute_time_t previous_tick_time[WHEEL_COUNT]; 
+extern volatile int64_t tick_dt[WHEEL_COUNT];
+extern volatile int8_t direction[WHEEL_COUNT];
 
 #define GEAR_RATIO 18.75f
-#define COUNTS_PER_REVOULTION 1200.0f // counting only level changes on both channels 
+#define COUNTS_PER_REVOULTION 1200.0f // counting level changes on both channels 
+#define WATCHDOG_TIMEOUT_US 100000 // us (100 ms)
 
 // ---------------------------------- FUNCTION PROTOTYPES ---------------------------------------------
 /*

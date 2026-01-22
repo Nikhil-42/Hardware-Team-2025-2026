@@ -65,6 +65,6 @@ void check_keyboard_stroke(robot_velocities_t* robo_v)
                         robo_v->vy = 0.0f;
                         robo_v->wz = 0.0f;
                         break;
-                        
+                
         }
 }

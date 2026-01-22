@@ -1,5 +1,7 @@
 #include "include/pinout.h"
 
+int8_t inverter[WHEEL_COUNT] = {-1, 1, -1, 1};
+
 // GPIO pins for each motor channel
 const MotorChannel motorPinMap [WHEEL_COUNT] = 
 {

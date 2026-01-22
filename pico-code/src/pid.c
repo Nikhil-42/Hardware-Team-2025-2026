@@ -1,13 +1,14 @@
 #include "include/pid.h"
 #include "include/pinout.h"
 #include <stdio.h>
+#include <math.h>
 
 const PIDConstants wheel_pid_gains[WHEEL_COUNT] = 
 {
-        {2.0f, 1.5f, 0.0f},
-        {2.0f, 1.5f, 0.0f},
-        {2.0f, 1.5f, 0.0f},
-        {2.0f, 1.5f, 0.0f}
+        {0.04f, 0.01f, 0.0f},
+        {0.04f, 0.01f, 0.0f},
+        {0.04f, 0.01f, 0.0f},
+        {0.04f, 0.01f, 0.0f}
 };
 
 void pid_init_all(PIDController *all_pids)
@@ -58,8 +59,17 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
         float p = pid->Kp * error; 
         float i = pid->Ki * pid->integration_accumulator; 
         float d = pid->Kd * (error - pid->previous_error) / pid->sample_time; 
-        
+
         pid->output = p + i + d;
+
+        // if both the set point and process variable are close to zero, we should reset the accumulator so that it doesn't 
+        // contribute to the output (i.e.)
+        // creates a dropout region so that small encoder displacements do not cause the motor to shake 
+        if (fabs(setpoint) < 1e-3 && fabs(process_variable))
+        {
+                pid->integration_accumulator = 0.0f;
+                pid->output = 0.0f;
+        }
 
         // clamp pid output to properly drive motor
         if (pid->output > pid->output_max)
@@ -70,7 +80,9 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
         {
                 pid->output = pid->output_min;
         }
-
+        printf("p: %f\n", p);
+        printf("i: %f\n", i);
+        printf("d: %f\n", d);
         printf("PID output %f\n", pid->output);
         pid->previous_error = error;
         return pid->output;

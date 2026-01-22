@@ -5,8 +5,11 @@
 #define UART0_BAUD 115200
 #define UART0_DATA 8
 #define UART0_STOP 1
-#define BYTES_IN_SPEED_TRANSMISSION 12
-#define SPEED_DATA_BYTES 8
+#define UART1_BAUD 115200
+#define UART1_DATA 8
+#define UART1_STOP 1
+#define BYTES_IN_SPEED_TRANSMISSION 10
+#define SPEED_DATA_BYTES 6
 #define RX_BUFFER_LENGTH 50
 
 extern const uint8_t SPEED_START_BYTE_H;
@@ -30,6 +33,11 @@ extern uint8_t valid_packet_end_idx;
         initialize the uart module with the appropriate frame settings and baud rate
 */
 void uart0_init();
+
+/*
+        initialize the uart module with the appropriate frame settings and baud rate
+*/
+void uart1_init();
 
 /*
         extracts a length N speed packet from a larger uint8_t fifo ending with a global terminating index

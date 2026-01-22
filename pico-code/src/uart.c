@@ -18,7 +18,12 @@ uint8_t rx_fifo[RX_BUFFER_LENGTH];
 
 void uart0_rx_isr()
 {
-        uint8_t rx_c = uart_getc(uart0);
+
+}
+
+void uart1_rx_isr()
+{
+        uint8_t rx_c = uart_getc(uart1);
         rx_fifo[rx_fifo_idx] = rx_c;
         rx_fifo_idx = (rx_fifo_idx + 1) % RX_BUFFER_LENGTH;
         rx_flag = true; 
@@ -49,6 +54,32 @@ void uart0_init()
         // enable RX interrupts on the uart channel
         uart_set_irqs_enabled(uart0, true, false);
 
+}
+
+void uart1_init()
+{
+        // configure GPIO 0 and 1 to be UART 0 TX and RX
+        //gpio_set_function(0, UART_FUNCSEL_NUM(uart0, 0));
+        //gpio_set_function(1, UART_FUNCSEL_NUM(uart0, 1));
+
+        // set the baud rate of the uart channel
+        uart_init(uart1, UART1_BAUD); 
+
+        // disable use of CTS/RTS lines 
+        uart_set_hw_flow(uart1, false, false);
+        
+        // format the tranmission frames 
+        uart_set_format(uart1, UART1_DATA, UART1_STOP, UART_PARITY_NONE);
+
+        // disable UART's FIFO to use our own (maybe unecessary)
+        uart_set_fifo_enabled(uart1, false);
+
+        // set properties of the ISR
+        irq_set_exclusive_handler(UART1_IRQ, uart1_rx_isr);
+        irq_set_enabled(UART1_IRQ, true);
+
+        // enable RX interrupts on the uart channel
+        uart_set_irqs_enabled(uart1, true, false);       
 }
 
 void extract_speed_packet(int16_t *buf, int N)
@@ -106,5 +137,5 @@ void send_speed_packet(float* buf, int N)
                 packet[2*i + 3] = packet_lo; 
         }
 
-        uart_write_blocking(uart0, packet, BYTES_IN_SPEED_TRANSMISSION);
+        uart_write_blocking(uart1, packet, BYTES_IN_SPEED_TRANSMISSION);
 }
