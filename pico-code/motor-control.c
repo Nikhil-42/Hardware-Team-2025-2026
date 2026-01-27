@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "include/encoder.h"
@@ -33,6 +34,9 @@ int main()
         // wait for USB to enumerate
         sleep_ms(2000);
 
+        // initialize UART 
+        //uart1_init();
+
         // initialize all motor pwm channels 
         motor_pwm_init();
         float motor_rpm_per_sample[WHEEL_COUNT];
@@ -49,7 +53,6 @@ int main()
 
         // set a robot velocity 
         robot_velocities_t robo_v = {0.0f, 0.0f, 0.0f};
-        robot_velocities_t robo_v_calc = {0, 0, 0};
 
         float mps_setpoints[WHEEL_COUNT] = {0};
         float rpm_setpoints[WHEEL_COUNT] = {0};
@@ -74,7 +77,7 @@ int main()
                         rx_flag = false;
                         if(check_full_uart_packet())
                         {
-                                extract_speed_packet(rpm_setpoints, WHEEL_COUNT);
+                                extract_speed_packet(&robo_v);
                         }
                 }
                 */
@@ -101,14 +104,15 @@ int main()
 
                         // compute pid outputs for each motor
                         pid_controller_update_all(wheel_pid, rpm_setpoints, motor_rpm_per_sample, pid_outputs); 
+                
                         // write the duty cycle and pwm state to each motor
                         set_motor_pwm_channels(pid_outputs); 
 
                         // send calculated speed information back over UART
-                        //send_speed_packet(motor_rpm_per_sample, WHEEL_COUNT);
-                        absolute_time_t end_time = get_absolute_time();
-                        int64_t time_diff = absolute_time_diff_us(start_time, end_time);
-                        printf("%" PRId64 "\n", time_diff);
+                        //send_speed_packet(&robo_v, &pose);
+                        //absolute_time_t end_time = get_absolute_time();
+                        //int64_t time_diff = absolute_time_diff_us(start_time, end_time);
+                        //printf("%" PRId64 "\n", time_diff);
                 }
         }
 }

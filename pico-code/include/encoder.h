@@ -16,6 +16,7 @@ extern int8_t gpio_to_motor_ch[MAX_GPIO];
 extern volatile absolute_time_t previous_tick_time[WHEEL_COUNT]; 
 extern volatile int64_t tick_dt[WHEEL_COUNT];
 extern volatile int8_t direction[WHEEL_COUNT];
+//extern int8_t ch2_sign;
 
 #define GEAR_RATIO 18.75f
 #define COUNTS_PER_REVOULTION 1200.0f // counting level changes on both channels 

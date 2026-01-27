@@ -11,6 +11,7 @@ volatile int32_t encoder_counts_difference[WHEEL_COUNT] = {0, 0, 0, 0};
 volatile absolute_time_t previous_tick_time[WHEEL_COUNT] = {0, 0, 0, 0};
 volatile int64_t tick_dt[WHEEL_COUNT] = {0, 0, 0, 0};
 volatile int8_t direction[WHEEL_COUNT] = {0, 0, 0, 0};
+//int8_t ch2_sign = 0;
 
 int8_t gpio_to_encoder_map[MAX_GPIO] = {0};
 int8_t gpio_to_motor_ch[MAX_GPIO] = {0};
@@ -28,7 +29,6 @@ void encoder_irq(uint gpio, uint32_t events)
         
         // if no channel found, return
         if(enc_ch < 0) {return;}
-
         if (enc_ch == 0)
         {
                 // if A and B channel levels are different, then motor is moving clockwise
@@ -48,9 +48,11 @@ void encoder_irq(uint gpio, uint32_t events)
         }
         else if (enc_ch == 1)
         {
-                absolute_time_t time_now = get_absolute_time();
-                tick_dt[channel] = absolute_time_diff_us(previous_tick_time[channel], time_now);
-                previous_tick_time[channel] = time_now;
+
+                        absolute_time_t time_now = get_absolute_time();
+                        tick_dt[channel] = absolute_time_diff_us(previous_tick_time[channel], time_now);
+                        previous_tick_time[channel] = time_now;
+                
                 // if A and B channel levels are the same, motor is moving clockwise 
                 if(encB_level == encA_level)
                 {
@@ -66,6 +68,7 @@ void encoder_irq(uint gpio, uint32_t events)
                         //printf("DECREMENT B | Encoder counts now: %lld\n", (signed long long)cumulative_encoder_counts[channel]);
                 }
         }
+        
 }
 
 void gpio_encoder_map_init()
@@ -136,7 +139,7 @@ void calculate_rpms(float* rpms)
                 //rpms[i] =  (float)encoder_counts_difference[i] * 60.0f / (COUNTS_PER_REVOULTION * 2000e-6f);
                 if (tick_dt[i] != 0)
                 {
-                        rpms[i] = (float)direction[i] * (float)inverter[i] * 60.0f * 1000000.0f / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
+                        rpms[i] = (float)direction[i] * (float)inverter[i] * 60.0f * 1000000.0f * 2 / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
                 }
                 printf("ticks per interval: %f", (float)tick_dt[i]);
                 printf("RPMs: %f\n", rpms[i]);
