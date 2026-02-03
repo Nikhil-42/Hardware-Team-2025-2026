@@ -1,4 +1,8 @@
 .*
-rpi.img
-!.gitignore
+*.img
 
+build
+install
+log
+
+!.gitignore
