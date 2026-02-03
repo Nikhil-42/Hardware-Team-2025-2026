@@ -31,16 +31,16 @@ void solve_mecanum_ik(robot_velocities_t* robo_v, float* wheel_angular_velocitie
         
         for(int i = 0; i < WHEEL_COUNT; i++)
         {
-                printf("[ik] solved wheel %d angular velocity: %f\n", i, wheel_angular_velocities[i]); 
+                //printf("[ik] solved wheel %d angular velocity: %f\n", i, wheel_angular_velocities[i]); 
         }
 }
 
 // wav is wheel_angular_velocities
 void solve_mecanum_fk(robot_velocities_t* robo_v, float* wav)
 {
-        robo_v->vx = (R/4.0f)*( wav[FL] + wav[FR] + wav[RL] + wav[RR]);
-        robo_v->vy = (R/4.0f)*(-wav[FL] + wav[FR] + wav[RL] - wav[RR]);
-        robo_v->wz = (1.0f / RADPS_TO_RPM_CONV) *(R/(4.0f * (Lx + Ly)))*(-wav[FL] + wav[FR] - wav[RL] + wav[RR]);
+        robo_v->vx = (1.0f / RADPS_TO_RPM_CONV) * (R/4.0f)*( wav[FL] + wav[FR] + wav[RL] + wav[RR]);
+        robo_v->vy = (1.0f / RADPS_TO_RPM_CONV) * (R/4.0f)*(-wav[FL] + wav[FR] + wav[RL] - wav[RR]);
+        robo_v->wz = (1.0f / RADPS_TO_RPM_CONV) * (R/(4.0f * (Lx + Ly)))*(-wav[FL] + wav[FR] - wav[RL] + wav[RR]);
         
         //printf("solved vx: %f\n", robo_v->vx);
         //printf("solved vy: %f\n", robo_v->vy);

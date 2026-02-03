@@ -133,7 +133,7 @@ void calculate_rpms(float* rpms)
                         tick_dt[i] = 0; 
                 }
                 rpms[i] = 0;
-                printf("enc difference: %" PRId32 "\n", encoder_counts_difference[i]);
+                //printf("enc difference: %" PRId32 "\n", encoder_counts_difference[i]);
                 
                 // calculate rpms
                 //rpms[i] =  (float)encoder_counts_difference[i] * 60.0f / (COUNTS_PER_REVOULTION * 2000e-6f);
@@ -141,8 +141,8 @@ void calculate_rpms(float* rpms)
                 {
                         rpms[i] = (float)direction[i] * (float)inverter[i] * 60.0f * 1000000.0f * 2 / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
                 }
-                printf("ticks per interval: %f", (float)tick_dt[i]);
-                printf("RPMs: %f\n", rpms[i]);
+                //printf("ticks per interval: %f", (float)tick_dt[i]);
+                //printf("RPMs: %f\n", rpms[i]);
                 previous_encoder_counts[i] = cumulative_encoder_counts[i];
         }
 }

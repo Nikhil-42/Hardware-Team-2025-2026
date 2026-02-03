@@ -158,9 +158,10 @@ void send_speed_packet(robot_velocities_t* robo_v, pose_t* pose)
         packet[BYTES_IN_SENT_PACKET - 2] = SPEED_END_BYTE_H;
         packet[BYTES_IN_SENT_PACKET - 1] = SPEED_END_BYTE_L;
 
-        for(int i = 0; i < POSITION_DATA_VALUES_COUNT; i++)
+        for(int i = 0; i < SPEED_DATA_VALUES_COUNT + POSITION_DATA_VALUES_COUNT; i++)
         {
-                int32_t buf_i = (int32_t)buf[i];
+                int32_t buf_i;
+                memcpy(&buf_i, &buf[i], sizeof(float));
                 uint8_t packet_msb = (uint8_t)((buf_i >> 24) & 0xFF);
                 uint8_t packet_byte2 = (uint8_t)((buf_i >> 16) & 0xFF);
                 uint8_t packet_byte1 = (uint8_t)((buf_i >> 8) & 0xFF);
@@ -169,6 +170,7 @@ void send_speed_packet(robot_velocities_t* robo_v, pose_t* pose)
                 packet[4*i + 3] = packet_byte2;
                 packet[4*i + 4] = packet_byte1; 
                 packet[4*i + 5] = packet_lsb; 
+                //printf("%d, %d, %d, %d\n", packet_msb, packet_byte2, packet_byte1, packet_lsb);
         }
 
         uart_write_blocking(uart0, packet, BYTES_IN_SENT_PACKET);

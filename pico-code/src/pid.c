@@ -80,10 +80,10 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
         {
                 pid->output = pid->output_min;
         }
-        printf("p: %f\n", p);
-        printf("i: %f\n", i);
-        printf("d: %f\n", d);
-        printf("PID output %f\n", pid->output);
+        //printf("p: %f\n", p);
+        //printf("i: %f\n", i);
+        //printf("d: %f\n", d);
+        //printf("PID output %f\n", pid->output);
         pid->previous_error = error;
         return pid->output;
 }

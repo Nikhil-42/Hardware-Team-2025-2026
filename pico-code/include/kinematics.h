@@ -2,11 +2,11 @@
 #include <stdint.h>
 
 #define PI 3.14159265359f
-#define RADPS_TO_RPM_CONV (30 / PI)
+#define RADPS_TO_RPM_CONV (30.0f / PI)
 // M1 fl, M2 fr, M3 rl, M4 rr
 
 // measurements in meters
-#define R 0.03f // [m] radius of wheel
+#define R 0.06f // [m] radius of wheel
 #define Lx 0.2f // [m] half distance between front wheels
 #define Ly 0.2f // [m] half distance between front and rear wheel
 

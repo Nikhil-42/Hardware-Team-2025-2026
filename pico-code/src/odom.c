@@ -5,7 +5,7 @@
 #include "include/motor.h"
 #include "include/kinematics.h"
 
-#define WHEEL_CIRCUMFERENCE (2 * PI * R)
+#define WHEEL_CIRCUMFERENCE (2.0f * PI * R)
 #define DS_CONV_FACTOR (WHEEL_CIRCUMFERENCE/COUNTS_PER_REVOULTION)
 float ds[WHEEL_COUNT]; 
 
@@ -27,7 +27,16 @@ void odom_update(pose_t* pose)
         // rotate   
         pose->x += dx * (float)cos((double)pose->theta) - dy * (float)sin((double)pose->theta);
         pose->y += dy * (float)cos((double)pose->theta) + dx * (float)sin((double)pose->theta);
-        pose->theta = (float)((int64_t)(pose->theta + dtheta) % (int64_t)(2 * PI));
-        printf("Pose [x, y, theta]: [%f, %f, %f]", pose->x, pose->y, pose->theta);
+        pose->theta = fmodf(pose->theta + dtheta, 2.0f * PI);
+        //printf("Pose [x, y, theta]: [%f, %f, %f]\n", pose->x, pose->y, pose->theta * 180.0f/PI);
+
+        // calculate pose by integrating rates 
+                 
+
+}
+
+// update poses with rates rather than encoder displacements 
+void update_pose_rate(pose_t* pose)
+{
 
 }

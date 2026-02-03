@@ -41,7 +41,7 @@ pico_set_program_version(motor-control "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(motor-control 0)
-pico_enable_stdio_usb(motor-control 1) # 1 for terminal print testing, 0 to disable
+pico_enable_stdio_usb(motor-control 0) # 1 for terminal print testing, 0 to disable
 
 # Add the standard library to the build
 target_link_libraries(motor-control
