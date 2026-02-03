@@ -15,6 +15,24 @@
 
 using namespace std::chrono_literals;
 
+int read_blocking(int fd, void* buf, size_t nbytes) {
+  size_t idx = 0;
+  while (idx < nbytes) {
+    ssize_t n = read(fd, (buf + idx), nbytes - idx);
+    if (n <= 0) {
+      return n;
+    }
+    idx += n;
+  }
+
+  return idx;
+}
+
+struct odom_t {
+  float velx, vely, veltheta;
+  float posex, posey, posetheta;
+};
+
 class Chassis : public rclcpp::Node
 {
   public:
@@ -24,7 +42,7 @@ class Chassis : public rclcpp::Node
       std::string device = this->get_parameter("device").as_string();
 
       RCLCPP_INFO(this->get_logger(), "Attempting to open serial port: %s", device.c_str());
-      this->serial_port_ = open(device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+      this->serial_port_ = open(device.c_str(), O_RDWR | O_NOCTTY);
 
       if (this->serial_port_ < 0)
       {
@@ -36,16 +54,22 @@ class Chassis : public rclcpp::Node
       }
 
       struct termios tty;
-      if (tcgetattr(this->serial_port_, &tty) != 0)
+      struct termios old_tty;
+
+      if (tcgetattr(this->serial_port_, &old_tty) != 0)
       {
         RCLCPP_ERROR(this->get_logger(), "Error from tcgetattr: %s", strerror(errno));
       }
+      tty = old_tty;
 
       // Set baud rate (input and output)
-      // Use standard constants like B9600, B19200, B115200, B230400, etc.
       cfsetospeed(&tty, B115200);
       cfsetispeed(&tty, B115200);
-      tcsetattr(this->serial_port_, TCSANOW, &tty);
+      cfmakeraw(&tty);
+
+      if (tcsetattr(this->serial_port_, TCSANOW, &tty) != 0) {
+        RCLCPP_ERROR(this->get_logger(), "Error from tcgetattr: %s", strerror(errno));
+      };
 
       this->cmd_vel_sub = this->create_subscription<geometry_msgs::msg::Twist>(
         "cmd_vel", 10,
@@ -65,7 +89,7 @@ class Chassis : public rclcpp::Node
           {
             RCLCPP_ERROR(this->get_logger(), "Error writing to serial port: %s", strerror(errno));
           } else {
-            RCLCPP_INFO(this->get_logger(), "Wrote %zd bytes to serial port", n);
+            // RCLCPP_INFO(this->get_logger(), "Wrote %zd bytes to serial port", n);
           }
         });
 
@@ -73,63 +97,94 @@ class Chassis : public rclcpp::Node
       this->read_thread_ = std::thread([this]() {
         while (rclcpp::ok())
         {
+          RCLCPP_INFO(this->get_logger(), "Scanning for start word (0xFFFF)...");
           // Align to first 0xFFFF
           uint8_t count = 0;
           while (rclcpp::ok() && count < 2) {
             // Read byte
             uint8_t c;
-            read(this->serial_port_, &c, 1);
-
-            if (c == 0xFF) {
-              count++;
-            }
-            else {
-              count = 0;
+            int n = read(this->serial_port_, &c, 1);
+            if (n < 0) {
+              RCLCPP_INFO(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
+            } else if (n > 0) {
+              RCLCPP_INFO(this->get_logger(), "Read %d", c);
+              if (c == 0xFF) {
+                count++;
+              }
+              else {
+                count = 0;
+              }
             }
           }
 
-          // Read payload + tail
-          char buf[3*4 + 3*4 + 2];
-          const uint32_t LEN = sizeof(buf) / sizeof(buf[0]);
+          RCLCPP_INFO(this->get_logger(), "Start word found!");
+          
+          while (rclcpp::ok()) {
+            // Read payload + tail
+            char buf[3*4 + 3*4 + 2];
+            const uint32_t LEN = sizeof(buf) / sizeof(buf[0]);
 
-          ssize_t idx = 0;
-          while (idx < LEN) {
-            ssize_t n = read(this->serial_port_, buf, sizeof(buf));
-            if (n < 0)
+            ssize_t n = read_blocking(this->serial_port_, buf, sizeof(buf));
+            if (n < 0) {
+                RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
+                break;
+            }
+
+            if (buf[LEN - 2] != 0xEE && buf[LEN - 1] != 0xEE)
             {
-              RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
+              RCLCPP_ERROR(this->get_logger(), "Malformed packet (missing tail)");
               break;
-            } else {
-              idx += n;
             }
-          }
 
-          if (idx < LEN) {
-            continue;
-          }
+            // RCLCPP_INFO(this->get_logger(), "Before: ");
+            // for (size_t i = 0; i+3 < LEN; i += 4) {
+            //   RCLCPP_INFO(this->get_logger(), "%02x%02x%02x%02x", buf[i], buf[i+1], buf[i+2], buf[i+3]);
+            // }
+            
+            for (size_t i = 0; i < 6; ++i) {
+              char flip[4];
+              for (size_t j = 0; j < 4; ++j) {
+                flip[j] = buf[i * 4 + 3 - j];
+              }
+              for (size_t j = 0; j < 4; ++j) {
+                buf[i * 4 + j] = flip[j];
+              }
+            }
 
-          if (buf[LEN - 2] == 0xEE && buf[LEN - 1] == 0xEE)
-          {
+            // RCLCPP_INFO(this->get_logger(), "After: ");
+            // for (size_t i = 0; i+3 < LEN; i += 4) {
+            //   RCLCPP_INFO(this->get_logger(), "%02x%02x%02x%02x", buf[i], buf[i+1], buf[i+2], buf[i+3]);
+            // }
 
-            // RCLCPP_INFO(this->get_logger(), "Read packet");
+            odom_t odom;
+            memcpy(&odom, &buf, sizeof(odom_t));
 
             auto msg = nav_msgs::msg::Odometry();
-            msg.pose.pose.position.x = *(float*)(buf+0);
-            msg.pose.pose.position.y = *(float*)(buf+4);
-            // quaternion from angle in radians
-            float a = *(float*)(buf+8);
-            msg.pose.pose.orientation.x = cosf32(a / 2);
-            msg.pose.pose.orientation.w = sinf32(a / 2);
+            msg.pose.pose.position.x = odom.posex;
+            msg.pose.pose.position.y = odom.posey;
 
-            msg.twist.twist.linear.x = *(float*)(buf+12);
-            msg.twist.twist.linear.y = *(float*)(buf+16);
-            msg.twist.twist.angular.z = *(float*)(buf+20);
+            msg.pose.pose.orientation.z = sinf32(odom.posetheta / 2.0f);
+            msg.pose.pose.orientation.w = cosf32(odom.posetheta / 2.0f);
+
+            msg.twist.twist.linear.x = odom.velx;
+            msg.twist.twist.linear.y = odom.vely;
+            msg.twist.twist.angular.z = odom.veltheta;
 
             this->odom_pub->publish(msg);
+
+            uint16_t start_word;
+            n = read_blocking(this->serial_port_, &start_word, 2);
+            if (n < 0) {
+              RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
+              break;
+            }
+
+            if (start_word != 0xFFFF) {
+              RCLCPP_ERROR(this->get_logger(), "Invalid start word: %x", start_word);
+              break;
+            }
           }
-          else {
-            RCLCPP_ERROR(this->get_logger(), "Malformed packet (missing tail)");
-          }
+
           std::this_thread::sleep_for(100ms); // Adjust sleep duration as needed
         }
       });
