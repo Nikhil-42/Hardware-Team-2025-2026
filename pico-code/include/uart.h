@@ -19,22 +19,14 @@
 #define BYTES_IN_SENT_PACKET (TOTAL_SPEED_DATA_BYTES + TOTAL_POSITION_DATA_BYTES + 4) 
 #define RX_BUFFER_LENGTH 100
 
-extern const uint8_t SPEED_START_BYTE_H;
-extern const uint8_t SPEED_START_BYTE_L;
-extern const uint8_t SPEED_END_BYTE_H;
-extern const uint8_t SPEED_END_BYTE_L;
-
-// stores characters read from UART rx channel
-extern uint8_t rx_fifo[RX_BUFFER_LENGTH];
-extern uint8_t rx_fifo_idx;
+#define SPEED_START_BYTE_H 0xFF
+#define SPEED_START_BYTE_L 0xFF
+#define SPEED_END_BYTE_H 0xEE
+#define SPEED_END_BYTE_L 0xEE
 
 // stores flag to indicate UART receptions
-extern bool rx_flag;
-
-// stores most recent index of terminating byte in a valid UART packet
-extern uint8_t valid_packet_end_idx;
-
-// stores 
+extern bool cmd_ready;
+extern robot_velocities_t cmd_vel;
 
 /*
         initialize the uart module with the appropriate frame settings and baud rate

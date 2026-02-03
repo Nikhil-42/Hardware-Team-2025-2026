@@ -10,6 +10,7 @@
 #include "include/ma.h"
 #include "include/kinematics.h"
 #include "include/keyboard.h"
+#include "include/uart.h"
 #include "include/odom.h"
 //#include "include/uart.h"
 
@@ -35,7 +36,7 @@ int main()
         sleep_ms(2000);
 
         // initialize UART 
-        //uart1_init();
+        uart0_init();
 
         // initialize all motor pwm channels 
         motor_pwm_init();
@@ -44,6 +45,12 @@ int main()
         // initialize all encoder channels 
         encoder_init();
         gpio_encoder_map_init();
+
+        // Enable onboard LED for packet receipt indication
+        gpio_init(PICO_DEFAULT_LED_PIN);
+        gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+        bool led_state = false;
+        gpio_put(PICO_DEFAULT_LED_PIN, led_state);
         
         // initialize PID controllers according to wheel_pid_gains
         PIDController wheel_pid[WHEEL_COUNT]; 
@@ -71,17 +78,16 @@ int main()
         while(true)
         {
                 // continually read from UART and update expected expected motor speed setpoints if full packet is recieved
-                /*
-                if(rx_flag)
+                if(cmd_ready)
                 {
-                        rx_flag = false;
-                        if(check_full_uart_packet())
-                        {
-                                extract_speed_packet(&robo_v);
-                        }
+                        robo_v = cmd_vel;
+                        cmd_ready = false;
+
+                        // indicate packet receipt by toggling onboard LED
+                        led_state = !led_state;
+                        gpio_put(PICO_DEFAULT_LED_PIN, led_state);
                 }
-                */
-                check_keyboard_stroke(&robo_v);
+                // check_keyboard_stroke(&robo_v);
 
                 if(sampling_flag)
                 {
@@ -113,6 +119,7 @@ int main()
                         //absolute_time_t end_time = get_absolute_time();
                         //int64_t time_diff = absolute_time_diff_us(start_time, end_time);
                         //printf("%" PRId64 "\n", time_diff);
+
                 }
         }
 }
