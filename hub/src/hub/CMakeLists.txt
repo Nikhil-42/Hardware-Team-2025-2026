@@ -21,7 +21,14 @@ target_include_directories(chassis PUBLIC
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_compile_features(chassis PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS chassis
+add_executable(fingers src/fingers.cpp)
+ament_target_dependencies(fingers rclcpp std_msgs nav_msgs)
+target_include_directories(fingers PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_compile_features(fingers PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+install(TARGETS chassis fingers
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
