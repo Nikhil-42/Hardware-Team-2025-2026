@@ -21,7 +21,7 @@ bool first_packet_arrived = false;
 float motor_rpm[WHEEL_COUNT] = {0}; 
 
 /*
-        Determines the motor's rpm using encoder counts at every time interval
+        set sampling flag to be used as main interval timer
 */
 static int64_t sampling_callback (alarm_id_t id, void *user_data)
 {
@@ -62,20 +62,17 @@ int main()
         robot_velocities_t robo_v = {0.0f, 0.0f, 0.0f};
         robot_velocities_t cmd_vel_send = {0.0f, 0.0f, 0.0f};
 
-        float mps_setpoints[WHEEL_COUNT] = {0};
         float rpm_setpoints[WHEEL_COUNT] = {0};
 
         // initialize moving average filters
-        runningAverageFilter ma_filt[WHEEL_COUNT]; 
-        running_average_init_all(ma_filt, WHEEL_COUNT);
-
-        float ma_filt_out[WHEEL_COUNT] = {0};
+        //runningAverageFilter ma_filt[WHEEL_COUNT]; 
+        //running_average_init_all(ma_filt, WHEEL_COUNT);
+        //float ma_filt_out[WHEEL_COUNT] = {0};
 
         // initialize pose
         pose_t pose = {0, 0, 0, 0};
         
         add_alarm_in_us(SAMPLING_INTERVAL_US, sampling_callback, NULL, false);
-        //printf("properly initialized with alarm"); 
         while(true)
         {
                 // continually read from UART and update expected expected motor speed setpoints if full packet is recieved
@@ -112,18 +109,17 @@ int main()
                         
                         // write the duty cycle and pwm state to each motor
                         set_motor_pwm_channels(pid_outputs); 
-                        // send calculated speed information back over UART
-
-                        // update cmd_vel with calculated motor rpms to report back to Pi 
                         
+                        // send calculated speed information back over UART
+                        // update cmd_vel with calculated motor rpms to report back to Pi                 
                         solve_mecanum_fk(&cmd_vel_send, motor_rpm_per_sample);
+
+                        // only send speed packets if we have recieved cmd_vel from Pi
                         if (first_packet_arrived)
                         {
                                 send_speed_packet(&cmd_vel_send, &pose);
                         }
-                        //absolute_time_t end_time = get_absolute_time();
-                        //int64_t time_diff = absolute_time_diff_us(start_time, end_time);
-                        //printf("%" PRId64 "\n", time_diff);
+
 
                 }
         }
