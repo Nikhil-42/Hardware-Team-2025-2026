@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>py_hub</name>
+  <version>0.0.0</version>
+  <description>Contains nodes related to the interfacing with hardware from the Raspberry Pi 5. (but in Python)</description>
+  <maintainer email="iyer.nikhil@ufl.com">Nikhil Iyer</maintainer>
+  <license>MIT</license>
+
+  <depend>rclpy</depend>
+  <depend>python3-gpiozero</depend>
+  <depend>example_interfaces</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <exec_depend>hub_interfaces</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

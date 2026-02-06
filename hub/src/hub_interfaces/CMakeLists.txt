@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(hub)
+project(hub_interfaces)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,29 +7,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
 
-add_executable(chassis src/chassis.cpp)
-ament_target_dependencies(chassis rclcpp std_msgs nav_msgs)
-target_include_directories(chassis PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_compile_features(chassis PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-
-# add_executable(fingers src/fingers.cpp)
-# ament_target_dependencies(fingers rclcpp std_msgs nav_msgs)
-#  target_include_directories(fingers PUBLIC
-#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-# target_compile_features(fingers PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-
-install(TARGETS chassis 
-  DESTINATION lib/${PROJECT_NAME})
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/Finger.srv"
+  DEPENDENCIES # Add packages that above messages depend on
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
