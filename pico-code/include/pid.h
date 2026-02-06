@@ -56,4 +56,4 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
 /*
         updates all provides pid controllers
 */
-void pid_controller_update_all(PIDController *all_pids, int16_t *setpoints, float *process_variables, float *pid_outputs);
+void pid_controller_update_all(PIDController *all_pids, float *setpoints, float *process_variables, float *pid_outputs);

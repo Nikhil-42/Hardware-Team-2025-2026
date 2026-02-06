@@ -3,7 +3,10 @@
 
 // ----------------------------------- MOTOR PINMAPPING -----------------------------------------------
 #define WHEEL_COUNT 4
+#define MAX_GPIO 29 // 0 - 28
 enum WheelPosition {FL, FR, RL, RR};
+// marks wheels that are inverted
+extern int8_t inverter[WHEEL_COUNT];
 
 typedef struct MotorChannel
 {

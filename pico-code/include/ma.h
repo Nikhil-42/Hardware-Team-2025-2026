@@ -1,6 +1,6 @@
 #pragma once
 
-#define NUM_SAMPLES 20
+#define NUM_SAMPLES 4
 
 // structure to store N-length running average information 
 typedef struct runningAverageFilter 

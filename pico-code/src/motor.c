@@ -74,6 +74,10 @@ void set_motor_pwm_channels(float *duty_cycles)
 
                 uint16_t carrier_level_1 = (uint16_t) top * ((float)fabs(duty_cycles[i]));
                 uint16_t carrier_level_2 = (uint16_t) top * ((float)fabs(duty_cycles[i]));
+
+                // if wheel is inverted on the robot, the sign needs to be inverted so that the wheel turns the correct direction 
+                duty_cycles[i] = (float)inverter[i] * duty_cycles[i];
+
                 // determine sign of motor direction and if pwm channel is disabled
                 if (duty_cycles[i] < 0)
                 {

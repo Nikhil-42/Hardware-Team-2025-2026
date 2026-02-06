@@ -34,18 +34,19 @@ project(motor-control C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(motor-control motor-control.c src/encoder.c src/motor.c src/pinout.c src/pid.c src/ma.c src/uart.c src/nec_protocol.c)
+add_executable(motor-control motor-control.c src/encoder.c src/motor.c src/pinout.c src/pid.c src/ma.c src/uart.c src/nec_protocol.c src/kinematics.c src/keyboard.c src/odom.c)
 
 pico_set_program_name(motor-control "motor-control")
 pico_set_program_version(motor-control "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(motor-control 0)
-pico_enable_stdio_usb(motor-control 1) # 1 for terminal print testing, 0 to disable
+pico_enable_stdio_usb(motor-control 0) # 1 for terminal print testing, 0 to disable
 
 # Add the standard library to the build
 target_link_libraries(motor-control
         pico_stdlib
+        pico_time
         hardware_gpio
         hardware_pwm
         hardware_clocks
