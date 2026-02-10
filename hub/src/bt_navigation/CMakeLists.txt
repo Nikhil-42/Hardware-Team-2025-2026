@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(hub_interfaces)
+project(bt_navigation)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,15 +7,29 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "srv/Finger.srv"
-  "srv/Gate.srv"
-  DEPENDENCIES # Add packages that above messages depend on
+add_executable(bt_navigator_node src/navigator_bt.cpp)
+ament_target_dependencies(bt_navigator_node
+  rclcpp
+  geometry_msgs
+  behaviortree_cpp
+  ament_index_cpp
+  nav2_msgs
+  behaviortree_ros2
+)
+
+include_directories(
+	include
+)
+
+install(TARGETS bt_navigator_node
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

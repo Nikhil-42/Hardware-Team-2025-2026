@@ -1,22 +1,21 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>hub</name>
+  <name>bt_navigation</name>
   <version>0.0.0</version>
-  <description>Contains nodes related to interfacing with hardware from the Raspberry Pi 5.</description>
-  <maintainer email="iyer.nikhil@ufl.edu">Nikhil Iyer</maintainer>
-  <license>MIT</license>
+  <description>TODO: Package description</description>
+  <maintainer email="iyer.h.nikhil@gmail.com">ieee</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <exec_depend>robot_localization</exec_depend>
 
   <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>launch</depend>
-  <depend>os</depend>
-  <depend>ament_index_python</depend>
-  <depend>launch.ros</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>behaviortree_cpp</depend>
+  <depend>nav2_msgs</depend>
+  <depend>ament_index_cpp</depend>
+  <depend> behaviortree_ros2</depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

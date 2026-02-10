@@ -28,8 +28,11 @@ target_compile_features(chassis PUBLIC c_std_99 cxx_std_17)  # Require C99 and C
 #  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 # target_compile_features(fingers PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS chassis 
+install(TARGETS chassis
   DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

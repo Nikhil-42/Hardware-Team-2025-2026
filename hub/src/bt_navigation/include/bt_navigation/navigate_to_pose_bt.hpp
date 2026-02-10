@@ -1,5 +1,6 @@
 #include <nav2_msgs/action/navigate_to_pose.hpp>
-#include <geometry_msgs/msg/PoseStamped.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include "behaviortree_ros2/bt_action_node.hpp"
 
 using namespace BT;
 
@@ -9,7 +10,7 @@ public:
         NavigateToPoseBT(const std::string& name,
                         const NodeConfig& config,
                         const RosNodeParams& params)
-        : RosActionNode<nav2_msgs::action::NavigateToPose(name, config, params) {}
+        : RosActionNode<nav2_msgs::action::NavigateToPose>(name, config, params) {}
 
         // takes a pose input as the goal
         static PortsList providedPorts()
@@ -27,7 +28,7 @@ public:
 
         // callback when reply is recieved
         // return success or failure depending on result
-        NoteStatus onResultRecieved(const WrappedResult& wr) override
+        NodeStatus onResultReceived(const WrappedResult& wr) override
         {
                 if(wr.code == rclcpp_action::ResultCode::SUCCEEDED)
                 {

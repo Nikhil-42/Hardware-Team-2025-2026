@@ -25,7 +25,8 @@ setup(
     entry_points={
         'console_scripts': [
             'service = py_hub.finger:main',
-            'client = py_hub.finger_client:main',
+            'finger = py_hub.finger_client:main',
+            'gate = py_hub.gate_client:main',
         ],
     },
 )
