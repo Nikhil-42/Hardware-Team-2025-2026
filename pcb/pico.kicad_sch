@@ -3827,16 +3827,6 @@
 		)
 		(uuid "0721af6c-1215-4615-a427-4921bee22b03")
 	)
-	(label "PICO_AGND"
-		(at 72.39 157.48 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "07b1a0d6-9943-4438-b60e-cb7529247093")
-	)
 	(label "FR_PWM2"
 		(at 53.34 62.23 180)
 		(effects
@@ -4827,6 +4817,16 @@
 		)
 		(uuid "ec998cbe-9f80-4dae-8a30-78475e03a22e")
 	)
+	(label "PICO_AGND"
+		(at 72.39 144.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f0df008d-0d9c-4623-bca1-4f6278f32441")
+	)
 	(label "RL_PWM1"
 		(at 53.34 149.86 180)
 		(effects
@@ -5073,7 +5073,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "04090e7b-a79c-4eb3-b8f8-0cc872accc3d")
-		(property "Reference" "#PWR039"
+		(property "Reference" "#PWR?"
 			(at 129.54 35.56 0)
 			(effects
 				(font
@@ -5122,6 +5122,12 @@
 			(uuid "549ef273-ae64-41c7-aae3-327e078bb714")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR039")
@@ -5140,7 +5146,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "090de7b9-0028-4ca7-aa21-d7384be50281")
-		(property "Reference" "#PWR030"
+		(property "Reference" "#PWR?"
 			(at 46.99 157.48 0)
 			(effects
 				(font
@@ -5189,6 +5195,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e0")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR030")
@@ -5207,7 +5219,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "10884ec7-037b-4801-82d1-909ffde6d65e")
-		(property "Reference" "#PWR066"
+		(property "Reference" "#PWR?"
 			(at 261.62 151.13 0)
 			(effects
 				(font
@@ -5255,9 +5267,82 @@
 			(uuid "c4c69489-b6b7-4d12-9a58-fb5a7d281466")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR066")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 72.39 157.48 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "15118a48-0883-4740-a19c-5b2ec38b21a9")
+		(property "Reference" "#PWR01"
+			(at 78.74 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 76.2 157.4799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 72.39 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 72.39 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 72.39 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "953dee5c-c859-49bd-ab82-da17640d9e7c")
+		)
+		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR01")
 					(unit 1)
 				)
 			)
@@ -5273,7 +5358,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "18288142-5587-4269-a551-7f0497f2bcbb")
-		(property "Reference" "#PWR056"
+		(property "Reference" "#PWR?"
 			(at 220.98 63.5 0)
 			(effects
 				(font
@@ -5322,6 +5407,12 @@
 			(uuid "05ed5409-6b45-4650-a494-8c20167db1ae")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR056")
@@ -5340,7 +5431,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1832db84-1c0f-4c89-a881-1794fb98e068")
-		(property "Reference" "#PWR048"
+		(property "Reference" "#PWR?"
 			(at 203.2 30.48 0)
 			(effects
 				(font
@@ -5389,6 +5480,12 @@
 			(uuid "f0f4a82f-5093-4294-94f7-038eccc2e823")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR048")
@@ -5407,7 +5504,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2784883b-8db8-47f6-b3e2-90bf3d5bb575")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR?"
 			(at 278.13 34.29 0)
 			(effects
 				(font
@@ -5456,6 +5553,12 @@
 			(uuid "15a91c48-c51c-47c8-8138-a19288af94cb")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR068")
@@ -5474,7 +5577,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2ce629dd-1e6b-4c71-83ca-a06f651b0b65")
-		(property "Reference" "#PWR061"
+		(property "Reference" "#PWR?"
 			(at 250.19 63.5 0)
 			(effects
 				(font
@@ -5523,6 +5626,12 @@
 			(uuid "073c0047-4181-4adb-816a-143372ea6746")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR061")
@@ -5541,7 +5650,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2d7e7dcd-0677-4875-a811-92d7a45bba02")
-		(property "Reference" "#PWR052"
+		(property "Reference" "#PWR?"
 			(at 194.31 60.96 0)
 			(effects
 				(font
@@ -5590,6 +5699,12 @@
 			(uuid "72a8d71c-c752-4acf-97bf-2eb371602ba7")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR052")
@@ -5608,7 +5723,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3d33cf2c-2c69-4d1a-87b7-34b8ab2d3d23")
-		(property "Reference" "#PWR033"
+		(property "Reference" "#PWR?"
 			(at 68.58 129.54 0)
 			(effects
 				(font
@@ -5657,6 +5772,12 @@
 			(uuid "479acd2c-c8b6-4922-a04a-e1c05ce99bfb")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR033")
@@ -5675,7 +5796,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4031d543-d4c1-4758-9c3c-7b8487c9f5be")
-		(property "Reference" "#PWR031"
+		(property "Reference" "#PWR?"
 			(at 46.99 170.18 0)
 			(effects
 				(font
@@ -5724,6 +5845,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e1")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR031")
@@ -5742,7 +5869,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "45572e43-ac54-4f2c-8d11-9b27bbf1f02a")
-		(property "Reference" "#PWR040"
+		(property "Reference" "#PWR?"
 			(at 139.7 53.34 0)
 			(effects
 				(font
@@ -5791,6 +5918,12 @@
 			(uuid "e389b17b-0b0d-4923-9b5a-a1814c52bc9a")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR040")
@@ -5809,7 +5942,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "45a39c7e-0c54-4507-937c-d3192e9e6024")
-		(property "Reference" "#PWR051"
+		(property "Reference" "#PWR?"
 			(at 194.31 27.94 0)
 			(effects
 				(font
@@ -5858,6 +5991,12 @@
 			(uuid "6fc10bf4-e357-45fb-b249-4c28c87cb8f3")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR051")
@@ -5875,7 +6014,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "478f282b-9cee-4e1c-a1c1-f17df3fd9fb5")
-		(property "Reference" "#PWR058"
+		(property "Reference" "#PWR?"
 			(at 231.14 38.1 0)
 			(effects
 				(font
@@ -5923,6 +6062,12 @@
 			(uuid "f27c48bb-8f47-4005-96e4-60800c9e94db")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR058")
@@ -5941,7 +6086,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4cde75f2-b8ec-4da4-bbeb-1280258b4883")
-		(property "Reference" "#PWR042"
+		(property "Reference" "#PWR?"
 			(at 162.56 33.02 0)
 			(effects
 				(font
@@ -5990,6 +6135,12 @@
 			(uuid "e389b17b-0b0d-4923-9b5a-a1814c52bc99")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR042")
@@ -6007,7 +6158,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4f3ea26d-5233-45b9-be7b-68b72e7d5e8d")
-		(property "Reference" "#PWR050"
+		(property "Reference" "#PWR?"
 			(at 193.04 118.11 0)
 			(effects
 				(font
@@ -6056,6 +6207,12 @@
 			(uuid "26ba0a3f-427c-4ddd-b7cd-c7a6ea6c51f8")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR050")
@@ -6074,7 +6231,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "50bdc192-74ea-4a93-bcd6-87017ea12f70")
-		(property "Reference" "#PWR055"
+		(property "Reference" "#PWR?"
 			(at 231.14 34.29 0)
 			(effects
 				(font
@@ -6123,6 +6280,12 @@
 			(uuid "180c763e-ee87-412e-8854-467d6cb2a96f")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR055")
@@ -6141,7 +6304,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "589b717f-2d1e-4968-98a9-518d91793174")
-		(property "Reference" "U7"
+		(property "Reference" "U?"
 			(at 212.725 19.05 0)
 			(effects
 				(font
@@ -6227,76 +6390,15 @@
 			(uuid "b2b54011-ead5-497e-a9ac-12afa27018d2")
 		)
 		(instances
-			(project "ieee"
-				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
-					(reference "U7")
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
 					(unit 1)
 				)
 			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 72.39 144.78 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5b912b61-7c3b-48a2-881b-5c03444f8af4")
-		(property "Reference" "#PWR035"
-			(at 78.74 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 76.2 144.7799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 72.39 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 72.39 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 72.39 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e3")
-		)
-		(instances
-			(project ""
+			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
-					(reference "#PWR035")
+					(reference "U7")
 					(unit 1)
 				)
 			)
@@ -6312,7 +6414,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5e9c440e-fcf1-4523-9612-aa0710265f56")
-		(property "Reference" "#PWR044"
+		(property "Reference" "#PWR?"
 			(at 162.56 53.34 0)
 			(effects
 				(font
@@ -6361,6 +6463,12 @@
 			(uuid "e389b17b-0b0d-4923-9b5a-a1814c52bc97")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR044")
@@ -6378,7 +6486,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "66178a8c-9621-4695-be7d-044f8f8fddbe")
-		(property "Reference" "#PWR032"
+		(property "Reference" "#PWR?"
 			(at 71.12 33.02 0)
 			(effects
 				(font
@@ -6426,6 +6534,12 @@
 			(uuid "af03e334-b462-4f3a-a097-f583db9bfb4e")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR032")
@@ -6443,7 +6557,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "67d40e53-dac8-4152-82cb-853c90a1b444")
-		(property "Reference" "J6"
+		(property "Reference" "J?"
 			(at 67.945 121.92 0)
 			(effects
 				(font
@@ -6547,6 +6661,12 @@
 			(uuid "4d2936ee-72a3-4a71-8a72-eb4ca2c55d17")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "J?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "J6")
@@ -6565,7 +6685,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6f880bdc-c0e0-49ca-8d70-49532c54b986")
-		(property "Reference" "U9"
+		(property "Reference" "U?"
 			(at 259.715 19.05 0)
 			(effects
 				(font
@@ -6651,6 +6771,12 @@
 			(uuid "d4e94514-ccdf-4622-b0e5-66a9eda05cd9")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "U9")
@@ -6669,7 +6795,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "717f71ff-b0a0-486e-8e39-ae111460cc38")
-		(property "Reference" "#PWR064"
+		(property "Reference" "#PWR?"
 			(at 261.62 120.65 0)
 			(effects
 				(font
@@ -6717,6 +6843,12 @@
 			(uuid "965fe96d-9b1f-40dd-8ae3-b1c667b79b68")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR064")
@@ -6735,7 +6867,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "73dc90c3-f961-4f95-9613-0785a111c9fa")
-		(property "Reference" "#PWR070"
+		(property "Reference" "#PWR?"
 			(at 278.13 67.31 0)
 			(effects
 				(font
@@ -6784,6 +6916,12 @@
 			(uuid "0fa440d5-eb1a-4499-835e-cc0e78dbc3b2")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR070")
@@ -6801,7 +6939,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "798998e7-8185-471d-b319-ab60bb62cec3")
-		(property "Reference" "#PWR027"
+		(property "Reference" "#PWR?"
 			(at 53.34 102.87 0)
 			(effects
 				(font
@@ -6850,6 +6988,12 @@
 			(uuid "8c976162-6516-4971-b9f4-adff78ba55ed")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR027")
@@ -6868,7 +7012,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7a79a115-44bb-4e61-bbc3-c7b99996ce52")
-		(property "Reference" "#PWR028"
+		(property "Reference" "#PWR?"
 			(at 46.99 132.08 0)
 			(effects
 				(font
@@ -6917,6 +7061,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e4")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR028")
@@ -6935,7 +7085,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7e6a2ace-fe04-4490-9b3d-57f4e40acf01")
-		(property "Reference" "#PWR029"
+		(property "Reference" "#PWR?"
 			(at 46.99 144.78 0)
 			(effects
 				(font
@@ -6984,6 +7134,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e5")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR029")
@@ -7002,7 +7158,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "93b79166-93ab-4ebb-b9c9-1ed71fc35379")
-		(property "Reference" "#PWR067"
+		(property "Reference" "#PWR?"
 			(at 267.97 30.48 0)
 			(effects
 				(font
@@ -7051,6 +7207,12 @@
 			(uuid "05ed5409-6b45-4650-a494-8c20167db1b0")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR067")
@@ -7068,7 +7230,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9af779b2-0d6d-490a-a347-b515b796bf7f")
-		(property "Reference" "#PWR047"
+		(property "Reference" "#PWR?"
 			(at 184.15 38.1 0)
 			(effects
 				(font
@@ -7116,6 +7278,12 @@
 			(uuid "50bc09d1-eb3a-4526-a587-58b8978ee2e5")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR047")
@@ -7134,7 +7302,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a2c2009f-2eb0-438e-935f-497c4528e68f")
-		(property "Reference" "U8"
+		(property "Reference" "U?"
 			(at 212.725 52.07 0)
 			(effects
 				(font
@@ -7220,6 +7388,12 @@
 			(uuid "2ae87633-70f6-441e-973e-ade34dbb9027")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "U8")
@@ -7238,7 +7412,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a74b3313-ea04-4114-bf2e-4d0fabcd697a")
-		(property "Reference" "#PWR060"
+		(property "Reference" "#PWR?"
 			(at 250.19 30.48 0)
 			(effects
 				(font
@@ -7287,6 +7461,12 @@
 			(uuid "93118015-6c25-47f5-967b-da32a14a2af1")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR060")
@@ -7304,7 +7484,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a9b666e7-2416-461f-b06b-0f4591f0c3f6")
-		(property "Reference" "U10"
+		(property "Reference" "U?"
 			(at 259.715 52.07 0)
 			(effects
 				(font
@@ -7390,6 +7570,12 @@
 			(uuid "682ffa97-3747-4931-87d2-2ea42162c3cb")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "U10")
@@ -7408,7 +7594,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ab2cb49e-ec0e-467b-b69d-6d216b89325e")
-		(property "Reference" "M4"
+		(property "Reference" "M?"
 			(at 153.67 43.18 0)
 			(effects
 				(font
@@ -7470,6 +7656,12 @@
 			(uuid "87942ff9-c12f-4fb4-8870-3133c0fe27c1")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "M?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "M4")
@@ -7488,7 +7680,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ad1ac413-ded4-4ccb-98c2-3e8487f0ae97")
-		(property "Reference" "#PWR049"
+		(property "Reference" "#PWR?"
 			(at 203.2 63.5 0)
 			(effects
 				(font
@@ -7537,6 +7729,12 @@
 			(uuid "be71e9cb-70b3-47a9-b3ff-4170f8c35d54")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR049")
@@ -7555,7 +7753,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b2e03d09-3882-4135-9782-9fedc2099f7d")
-		(property "Reference" "M1"
+		(property "Reference" "M?"
 			(at 130.81 22.86 0)
 			(effects
 				(font
@@ -7617,6 +7815,12 @@
 			(uuid "e458c49e-5d28-46bc-8c50-194f3d24e4f0")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "M?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "M1")
@@ -7635,7 +7839,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b3d3f2d9-6d29-438a-84f7-6c5d707143aa")
-		(property "Reference" "U6"
+		(property "Reference" "U?"
 			(at 231.14 106.68 0)
 			(effects
 				(font
@@ -7753,6 +7957,12 @@
 			(uuid "88509c29-cfec-4058-bf40-a3e1a64d2b52")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "U6")
@@ -7770,7 +7980,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b4272ee3-2c28-4809-8e51-e5b592e3f542")
-		(property "Reference" "#PWR059"
+		(property "Reference" "#PWR?"
 			(at 231.14 71.12 0)
 			(effects
 				(font
@@ -7818,6 +8028,12 @@
 			(uuid "10d996a3-c273-439e-8ff8-323ee93739d9")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR059")
@@ -7836,7 +8052,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b6a60f1a-7ba8-4541-9f0d-62a8f96b9917")
-		(property "Reference" "#PWR036"
+		(property "Reference" "#PWR?"
 			(at 78.74 170.18 0)
 			(effects
 				(font
@@ -7885,6 +8101,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e6")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR036")
@@ -7903,7 +8125,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b9db6119-97a7-42c6-a5b6-9dc3a6a87d97")
-		(property "Reference" "M2"
+		(property "Reference" "M?"
 			(at 130.81 43.18 0)
 			(effects
 				(font
@@ -7965,6 +8187,12 @@
 			(uuid "14dba49a-6c1f-4df4-b056-26904d66a801")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "M?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "M2")
@@ -7983,7 +8211,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bbc51928-d18a-430e-b85b-2a7f191138b9")
-		(property "Reference" "#PWR053"
+		(property "Reference" "#PWR?"
 			(at 200.66 151.13 0)
 			(effects
 				(font
@@ -8031,6 +8259,12 @@
 			(uuid "0b225511-5875-4a9c-aab5-0c9f3457feb7")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR053")
@@ -8049,7 +8283,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c15ce329-468e-4728-bb25-7db3dcdbab51")
-		(property "Reference" "#PWR045"
+		(property "Reference" "#PWR?"
 			(at 152.4 55.88 0)
 			(effects
 				(font
@@ -8098,6 +8332,12 @@
 			(uuid "549ef273-ae64-41c7-aae3-327e078bb713")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR045")
@@ -8116,7 +8356,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c46e76c0-24a9-41de-ba3d-85836eefa044")
-		(property "Reference" "#PWR062"
+		(property "Reference" "#PWR?"
 			(at 241.3 27.94 0)
 			(effects
 				(font
@@ -8165,6 +8405,12 @@
 			(uuid "4558096e-b574-41bb-b150-ac0d5ab40dcc")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR062")
@@ -8183,7 +8429,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c90e2126-9e38-4e74-a401-4902defaa7ae")
-		(property "Reference" "#PWR057"
+		(property "Reference" "#PWR?"
 			(at 231.14 67.31 0)
 			(effects
 				(font
@@ -8232,6 +8478,12 @@
 			(uuid "3d31db99-72c2-44e7-af77-02224c67d88a")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR057")
@@ -8250,7 +8502,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cc36c313-fd87-466b-8b84-d2199d17699a")
-		(property "Reference" "#PWR054"
+		(property "Reference" "#PWR?"
 			(at 220.98 30.48 0)
 			(effects
 				(font
@@ -8299,6 +8551,12 @@
 			(uuid "2265e48a-b6d9-4371-a8e8-39696820b067")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR054")
@@ -8317,7 +8575,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cf714d7b-4221-431e-8b80-b1fb3e384d3b")
-		(property "Reference" "#PWR038"
+		(property "Reference" "#PWR?"
 			(at 139.7 33.02 0)
 			(effects
 				(font
@@ -8366,6 +8624,12 @@
 			(uuid "e389b17b-0b0d-4923-9b5a-a1814c52bc98")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR038")
@@ -8384,7 +8648,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d129e9e3-8762-4ade-a4b7-1ff00546b6d6")
-		(property "Reference" "#PWR065"
+		(property "Reference" "#PWR?"
 			(at 267.97 120.65 0)
 			(effects
 				(font
@@ -8433,6 +8697,12 @@
 			(uuid "14ddda0e-11a2-4cb5-8951-e94e8721b167")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR065")
@@ -8451,7 +8721,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d16ed1b6-4284-4d26-b15e-b3f65e2eac09")
-		(property "Reference" "#PWR041"
+		(property "Reference" "#PWR?"
 			(at 129.54 55.88 0)
 			(effects
 				(font
@@ -8500,6 +8770,12 @@
 			(uuid "549ef273-ae64-41c7-aae3-327e078bb715")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR041")
@@ -8518,7 +8794,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d27a9030-e23d-4e77-bd20-73f1278eb477")
-		(property "Reference" "#PWR043"
+		(property "Reference" "#PWR?"
 			(at 152.4 35.56 0)
 			(effects
 				(font
@@ -8567,6 +8843,12 @@
 			(uuid "549ef273-ae64-41c7-aae3-327e078bb712")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR043")
@@ -8585,7 +8867,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "de0968fa-21e7-44d2-83a0-039aba7d9eca")
-		(property "Reference" "#PWR034"
+		(property "Reference" "#PWR?"
 			(at 78.74 132.08 0)
 			(effects
 				(font
@@ -8634,6 +8916,12 @@
 			(uuid "b8499807-551d-41dc-91b8-6e003f41b6e7")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR034")
@@ -8652,7 +8940,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "df9747d4-a27e-4a46-b61f-5ad6ae4d099e")
-		(property "Reference" "J5"
+		(property "Reference" "J?"
 			(at 57.785 121.92 0)
 			(effects
 				(font
@@ -8756,6 +9044,12 @@
 			(uuid "093508a9-dbde-4410-9432-a41df721e909")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "J?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "J5")
@@ -8773,7 +9067,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e3192fd0-f62f-4427-816f-adf5951a9800")
-		(property "Reference" "#PWR046"
+		(property "Reference" "#PWR?"
 			(at 182.88 71.12 0)
 			(effects
 				(font
@@ -8821,6 +9115,12 @@
 			(uuid "e150651f-c4b1-4841-96db-18ec20ddca83")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR046")
@@ -8839,7 +9139,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e4faba5c-41ed-4a54-bfb6-87d4fe052fd0")
-		(property "Reference" "U5"
+		(property "Reference" "U?"
 			(at 66.04 110.4899 0)
 			(effects
 				(font
@@ -8894,6 +9194,12 @@
 			(uuid "fc0fd1ab-7185-4273-bd46-6fa8671b6d5f")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "U?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "U5")
@@ -8912,7 +9218,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e51a6333-1f07-4c22-8946-44cb150c48c9")
-		(property "Reference" "M3"
+		(property "Reference" "M?"
 			(at 153.67 22.86 0)
 			(effects
 				(font
@@ -8974,6 +9280,12 @@
 			(uuid "eb2c08a2-d28c-4d62-be9c-5d07ebe37a94")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "M?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "M3")
@@ -8991,7 +9303,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e5e136aa-8eb8-46ba-b149-c42eb66a565c")
-		(property "Reference" "A3"
+		(property "Reference" "A?"
 			(at 78.3433 101.6 0)
 			(effects
 				(font
@@ -9157,6 +9469,12 @@
 			(uuid "e8b77154-14da-49c5-905b-e667cb0cc548")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "A?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "A3")
@@ -9175,7 +9493,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e8b00519-a3d2-426f-af73-69fd71aaceda")
-		(property "Reference" "#PWR069"
+		(property "Reference" "#PWR?"
 			(at 267.97 63.5 0)
 			(effects
 				(font
@@ -9224,6 +9542,12 @@
 			(uuid "05ed5409-6b45-4650-a494-8c20167db1b1")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project ""
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR069")
@@ -9242,7 +9566,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "eca03ff0-cd6c-411d-b25b-299facace15b")
-		(property "Reference" "#PWR037"
+		(property "Reference" "#PWR?"
 			(at 76.2 109.22 0)
 			(effects
 				(font
@@ -9290,6 +9614,12 @@
 			(uuid "6c0718e1-f7ec-450c-961e-956e5b942dbc")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR037")
@@ -9308,7 +9638,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fc33775c-22c9-46dd-a11e-e34f130eec34")
-		(property "Reference" "#PWR063"
+		(property "Reference" "#PWR?"
 			(at 241.3 60.96 0)
 			(effects
 				(font
@@ -9357,6 +9687,12 @@
 			(uuid "ebdc8fb6-8645-4258-9a6b-c798f1dcd30c")
 		)
 		(instances
+			(project "pico"
+				(path "/39595742-ff5f-4751-b75f-e1afca14385e"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "ieee"
 				(path "/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82"
 					(reference "#PWR063")
@@ -9365,4 +9701,10 @@
 			)
 		)
 	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )
