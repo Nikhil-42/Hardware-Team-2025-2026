@@ -228,8 +228,24 @@
   "erc": {
     "erc_exclusions": [
       [
+        "lib_symbol_mismatch|584200|914400|dd224398-469a-41cd-b019-914b0a4ebbd5|00000000-0000-0000-0000-000000000000|||",
+        ""
+      ],
+      [
+        "multiple_net_names|279400|876300|7d73b3af-8241-4042-95d5-67c016e9a408|306335e2-ac89-42f9-8eee-8b45c39b29e4|/de247b43-2c3b-4650-9f65-a404f4d1ae86|/de247b43-2c3b-4650-9f65-a404f4d1ae86|/de247b43-2c3b-4650-9f65-a404f4d1ae86",
+        ""
+      ],
+      [
         "pin_to_pin|1181100|228600|97838870-63af-4e85-a4ab-41ff06ff8f82|69b9e4c3-f0b8-49b7-b674-8e8922076053|/de247b43-2c3b-4650-9f65-a404f4d1ae86|/de247b43-2c3b-4650-9f65-a404f4d1ae86|/de247b43-2c3b-4650-9f65-a404f4d1ae86",
         "Powering the RPI through the 5V pin (advanced usage)."
+      ],
+      [
+        "pin_to_pin|762000|1028700|c2e4901a-fdeb-45dc-ad9d-35f4d4b29e93|545037db-a513-4a8a-99f5-fe019d8e938d|/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82|/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82|/de247b43-2c3b-4650-9f65-a404f4d1ae86",
+        "RPI is being powered via header"
+      ],
+      [
+        "power_pin_not_driven|990600|749300|b7781198-9baa-4e94-85f7-c25a13a90ce0|00000000-0000-0000-0000-000000000000|/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82|/de247b43-2c3b-4650-9f65-a404f4d1ae86/a87090f9-d2e3-4dff-b75c-ef59f3dcab82|",
+        "ADC pins are not used"
       ]
     ],
     "meta": {
