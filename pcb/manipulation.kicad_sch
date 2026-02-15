@@ -2194,7 +2194,7 @@
 		)
 		(uuid "9a5be8b9-e59e-4203-8ae1-f553ba0922e2")
 	)
-	(label "CORKSCREW_OUT2"
+	(label "CORKSCREW_OUT1"
 		(at 160.02 44.45 0)
 		(effects
 			(font
@@ -2244,7 +2244,7 @@
 		)
 		(uuid "f1885fc4-fb3f-436c-8d49-f12e48c9b8d5")
 	)
-	(label "CORKSCREW_OUT1"
+	(label "CORKSCREW_OUT2"
 		(at 160.02 40.64 0)
 		(effects
 			(font
