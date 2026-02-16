@@ -8625,10 +8625,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "79c93a78-bf15-4740-b084-2f777c28ff03")
+			(uuid "79c93a78-bf15-4740-b084-2f777c28ff04")
 		)
 		(pin "1"
-			(uuid "b5969f1e-f623-4a8e-9fe6-59302a01aad9")
+			(uuid "b5969f1e-f623-4a8e-9fe6-59302a01aada")
 		)
 		(instances
 			(project ""
