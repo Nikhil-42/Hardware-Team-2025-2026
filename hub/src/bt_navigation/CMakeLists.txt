@@ -12,16 +12,16 @@ find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(nav2_msgs REQUIRED)
-find_package(behaviortree_ros2 REQUIRED)
+find_package(nav2_behavior_tree REQUIRED)
 
-add_executable(bt_navigator_node src/navigator_bt.cpp)
+add_executable(bt_navigator_node src/bt_navigator_node.cpp)
 ament_target_dependencies(bt_navigator_node
   rclcpp
   geometry_msgs
   behaviortree_cpp
   ament_index_cpp
   nav2_msgs
-  behaviortree_ros2
+  nav2_behavior_tree
 )
 
 include_directories(
@@ -30,6 +30,11 @@ include_directories(
 
 install(TARGETS bt_navigator_node
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+	DIRECTORY behavior_trees/
+	DESTINATION share/${PROJECT_NAME}/behavior_trees
 )
 
 if(BUILD_TESTING)

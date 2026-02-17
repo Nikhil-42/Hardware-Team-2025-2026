@@ -1,16 +1,16 @@
 #include <nav2_msgs/action/navigate_to_pose.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include "behaviortree_ros2/bt_action_node.hpp"
+#include "nav2_behavior_tree/bt_action_node.hpp"
 
 using namespace BT;
 
-class NavigateToPoseBT : public RosActionNode<nav2_msgs::action::NavigateToPose>
+class NavigateToPoseBT : public nav2_behavior_tree::BtActionNode<nav2_msgs::action::NavigateToPose>
 {
 public:
-        NavigateToPoseBT(const std::string& name,
-                        const NodeConfig& config,
-                        const RosNodeParams& params)
-        : RosActionNode<nav2_msgs::action::NavigateToPose>(name, config, params) {}
+        NavigateToPoseBT(const std:: string& xml_tag_name,
+			const std::string& action_name,
+                        const NodeConfiguration& config)
+	: nav2_behavior_tree::BtActionNode<nav2_msgs::action::NavigateToPose>(xml_tag_name, action_name, config) {}
 
         // takes a pose input as the goal
         static PortsList providedPorts()
@@ -18,32 +18,33 @@ public:
                 return providedBasicPorts({InputPort<geometry_msgs::msg::PoseStamped>("goal")});
         }
 
-        // called with tree node is ticked and should send req to action server
-        bool setGoal(RosActionNode::Goal& goal) override
-        {
-                // goal.pose is part of nav2_msgs
-                getInput("goal", goal.pose);
-                return true;
-        }
+	void on_tick() override
+	{
+		geometry_msgs::msg::PoseStamped goal;
 
-        // callback when reply is recieved
-        // return success or failure depending on result
-        NodeStatus onResultReceived(const WrappedResult& wr) override
-        {
-                if(wr.code == rclcpp_action::ResultCode::SUCCEEDED)
-                {
-                        return NodeStatus::SUCCESS;
-                }
-                else
-                {
-                        return NodeStatus::FAILURE;
-                }
-        }
+		if(!getInput("goal", goal))
+		{
+			throw RuntimeError("Missing required input");
+		}
 
-        // returns feedback information while navigating to pose
-        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback)
-        {
-                RCLCPP_INFO(logger(), "Navigating to pose...");
-                return NodeStatus::RUNNING;
-        }
+		goal_.pose = goal;
+	}
+
+	NodeStatus on_success() override
+	{
+		RCLCPP_INFO(node_->get_logger(), "Navigation SUCCEEDED");
+		return NodeStatus::SUCCESS;
+	}
+
+	NodeStatus on_aborted() override
+  	{
+    		RCLCPP_WARN(node_->get_logger(), "Navigation ABORTED");
+    		return NodeStatus::FAILURE;
+  	}
+
+  	NodeStatus on_cancelled() override
+ 	{
+    		RCLCPP_WARN(node_->get_logger(), "Navigation CANCELLED");
+    		return NodeStatus::FAILURE;
+	}
 };

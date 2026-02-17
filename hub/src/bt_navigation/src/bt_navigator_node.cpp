@@ -16,7 +16,6 @@ class BTNavigatorNode : public rclcpp::Node
 
 
 			blackboard = Blackboard::create();
-			blackboard->set("node", this); //allows action node to access this node
 
 			geometry_msgs::msg::PoseStamped goal;
 			goal.header.frame_id = "map";
@@ -25,9 +24,25 @@ class BTNavigatorNode : public rclcpp::Node
 			goal.pose.position.y = 0.25;
 			goal.pose.orientation.w = 1.0;
 
-			blackboard->set("nav_goal", goal);
+			factory.registerBuilder<NavigateToPoseBT>(
+				"NavigateToPose",
+  				[](const std::string& name, const BT::NodeConfiguration& config)
+  				{
+    					return std::make_unique<NavigateToPoseBT>(
+        				name,
+        				"navigate_to_pose",
+        				config);
+				});
 
-			factory.registerNodeType<NavigateToPoseBT>("NavigateToPose");
+			//blackboard->set<rclcpp::Node::SharedPtr>("node", shared_from_this());
+		}
+
+		void initialize()
+		{
+			blackboard->set("node", this->shared_from_this());
+			blackboard->set("bt_loop_duration", std::chrono::milliseconds(50));
+			blackboard->set("wait_for_service_timeout", std::chrono::milliseconds(5000));
+
 			std::string pkg_path = ament_index_cpp::get_package_share_directory("bt_navigation");
 			tree = factory.createTreeFromFile(pkg_path + "/behavior_trees/nav_tree_test.xml", blackboard);
 
@@ -37,7 +52,7 @@ class BTNavigatorNode : public rclcpp::Node
 	private:
 		void tickTree()
 		{
-			tree.tickRoot();
+			tree.tickWhileRunning(std::chrono::milliseconds(10));
 		}
 
 		Tree tree;
@@ -50,6 +65,7 @@ int main(int argc, char **argv)
 {
 	rclcpp::init(argc, argv);
 	auto node = std::make_shared<BTNavigatorNode>();
+	node->initialize();
 	rclcpp::spin(node);
 	rclcpp::shutdown();
 	return 0;
