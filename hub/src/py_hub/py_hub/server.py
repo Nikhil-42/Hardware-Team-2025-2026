@@ -1,22 +1,23 @@
 import rclpy
 from rclpy.node import Node
 from time import sleep
-from hub_interfaces.srv import Finger, Gate
+from hub_interfaces.srv import Enable, Finger, Gate
 from gpiozero import LED, Motor, Servo
 
 class ManipulationService(Node):
     def __init__(self):
-        super().__init__('finger_service')
+        super().__init__('manipulation_service')
+        self.enable_srv = self.create_service(Enable, 'enable', self.enable)
         # Quickly extends and retracts the specified finger
-        self.srv = self.create_service(Finger, 'click', self.click)
+        self.click_srv = self.create_service(Finger, 'click', self.click)
         # Expels the specified finger from the hand
-        self.srv = self.create_service(Finger, 'eject', self.eject)
+        self.eject_srv = self.create_service(Finger, 'eject', self.eject)
         # Retracts a new finger into the hand
-        self.srv = self.create_service(Finger, 'retract', self.retract)
-        self.srv = self.create_service(Gate, 'gate', self.gate)
+        self.retract_srv = self.create_service(Finger, 'retract', self.retract)
+        self.gate_srv = self.create_service(Gate, 'gate', self.gate)
         
-        self.enable_fingers = LED(18)
-        self.enable_fingers.off()
+        self.enable_pin = LED(18)
+        self.enable_pin.off()
         
         self.finger_motors = [
             Motor(23, 24),  # Finger 1
@@ -29,6 +30,18 @@ class ManipulationService(Node):
             Servo(5, min_pulse_width=0.0006, max_pulse_width=0.0014),  # Gate 1
             Servo(6, min_pulse_width=0.0016, max_pulse_width=0.0024),  # Gate 2
         ]
+        self.get_logger().info("Closing gates")
+        self.gate_servos[1].min()
+        sleep(0.5)
+        self.gate_servos[0].max()
+
+    def enable(self, request: Enable.Request, response: Enable.Response):
+        if request.state:
+            self.enable_pin.on()
+        else:
+            self.enable_pin.off()
+        response.success = True
+        return response
 
     def gate(self, request: Gate.Request, response: Gate.Response):
         if request.open:
@@ -53,11 +66,9 @@ class ManipulationService(Node):
         finger_index = request.idx - 1
         m = self.finger_motors[finger_index]
         
-        self.enable_fingers.on()
         m.forward()
         sleep(3.0)
         m.stop()
-        self.enable_fingers.off()
         self.get_logger().info(f"Ejected finger {request.idx}")
         response.success = True
         return response
@@ -72,11 +83,9 @@ class ManipulationService(Node):
         finger_index = request.idx - 1
         m = self.finger_motors[finger_index]
         
-        self.enable_fingers.on()
         m.backward()
         sleep(1.5)
         m.stop()
-        self.enable_fingers.off()
         self.get_logger().info(f"Retracted finger {request.idx}")
         response.success = True
         return response
@@ -90,13 +99,11 @@ class ManipulationService(Node):
         finger_index = request.idx - 1
         m = self.finger_motors[finger_index]
         self.get_logger().info(f"Beep [pin {request.idx}]")
-        self.enable_fingers.on()
         m.forward()
-        sleep(1.0)
+        sleep(0.25)
         m.backward()
-        sleep(1.0)
+        sleep(0.5)
         m.stop()
-        self.enable_fingers.off()
         self.get_logger().info(f"Boop [pin {request.idx}]")
         response.success = True        
         return response
