@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot name="ieee">
+
+  <!-- Robot center frame -->
+  <link name="base_link"/>
+
+  <!-- IMU frame -->
+  <link name="imu_link"/>
+  <joint name="base_to_imu" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <!-- IMU: x=0, y=-3in, z=+3in (meters) -->
+    <origin xyz="0.0 -0.0762 0.0762" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Camera yaw frame (rotates about robot Z) -->
+  <link name="camera_yaw_link"/>
+  <joint name="base_to_camera_yaw" type="revolute">
+    <parent link="base_link"/>
+    <child link="camera_yaw_link"/>
+    <!-- Camera yaw axis located at robot center, z=12in (meters) -->
+    <origin xyz="0.0 0.0 0.3048" rpy="0 0 0"/>
+    <!-- Yaw around robot Z -->
+    <axis xyz="0 0 1"/>
+    <!-- ±82.5 degrees = ±1.4398966 rad -->
+    <limit lower="-1.4398966" upper="1.4398966" effort="1" velocity="2"/>
+  </joint>
+
+  <!-- Camera frame (rigidly attached to the yaw link) -->
+  <link name="camera_link"/>
+  <joint name="camera_yaw_to_camera" type="fixed">
+    <parent link="camera_yaw_link"/>
+    <child link="camera_link"/>
+    <!-- If camera origin is offset from yaw axis, edit xyz/rpy -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>
+

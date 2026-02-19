@@ -105,7 +105,7 @@ class Chassis : public rclcpp::Node
             uint8_t c;
             int n = read(this->serial_port_, &c, 1);
             if (n < 0) {
-              RCLCPP_INFO(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
+              RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
             } else if (n > 0) {
               RCLCPP_INFO(this->get_logger(), "Read %d", c);
               if (c == 0xFF) {
@@ -160,6 +160,10 @@ class Chassis : public rclcpp::Node
             memcpy(&odom, &buf, sizeof(odom_t));
 
             auto msg = nav_msgs::msg::Odometry();
+            msg.header.stamp = this->get_clock()->now();
+            msg.header.frame_id = "odom";
+            msg.child_frame_id = "base_link";
+
             msg.pose.pose.position.x = odom.posex;
             msg.pose.pose.position.y = odom.posey;
 

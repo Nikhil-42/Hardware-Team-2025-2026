@@ -31,7 +31,7 @@ target_compile_features(chassis PUBLIC c_std_99 cxx_std_17)  # Require C99 and C
 install(TARGETS chassis
   DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY launch
+install(DIRECTORY launch res
   DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)

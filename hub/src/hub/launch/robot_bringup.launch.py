@@ -1,37 +1,70 @@
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, Command
 from launch import LaunchDescription
+from launch.actions import ExecuteProcess
 import launch
+from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 import os
 
-get_package_share_directory('hub')
-
 def generate_launch_description():
-	pkg_share = get_package_share_directory('hub')
+	pkg_share = FindPackageShare(package='hub').find('hub')
+	model_path = os.path.join(pkg_share, 'res', 'robot.urdf.xacro')
+	ekf_path = os.path.join(pkg_share, 'res', 'ekf.yaml')
+	robot_description = ParameterValue(Command(['xacro ', model_path]), value_type=str)
 
+	robot_state_publisher_node = Node(
+		package='robot_state_publisher',
+		executable='robot_state_publisher',
+		parameters=[{'robot_description': robot_description}],
+	)
+	joint_state_publisher_node = Node(
+		package='joint_state_publisher',
+		executable='joint_state_publisher',
+		name='joint_state_publisher',
+		parameters=[{'robot_description': robot_description}],
+	)
 	robot_localization_node = Node(
 		package = 'robot_localization',
 		executable='ekf_node',
-    		name='ekf_filter_node',
-    		output='screen',
-    		parameters=[os.path.join(pkg_share, 'config/ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+			name='ekf_filter_node',
+			output='screen',
+			parameters=[ekf_path]
 	)
-
 	chassis_node = Node(
 		package = 'hub',
 		executable = 'chassis',
 		name = 'chassis_node',
 		output = 'screen'
 	)
+	services = Node(
+		package = 'py_hub',
+		executable = 'service',
+		name = 'services',
+		output = 'screen'
+	)
+	static_tf = Node(
+		package='tf2_ros',
+		executable='static_transform_publisher',
+		arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+	)
+
+	enable = Node(
+		package='py_hub',
+		executable='enable',
+		name='enable',
+		output='screen',
+		arguments=['1']
+	)
+
 
 	return LaunchDescription([
 		# set true if running a simulation (uses system clock when false)
-		launch.actions.DeclareLaunchArgument(
-			name = 'use_sim_time',
-			default_value = 'False',
-			description = 'flag to enable use_sim_time'
-		),
+		static_tf,
+		enable,
+		# joint_state_publisher_node,
 		robot_localization_node,
-		chassis_node
+		chassis_node,
+		services,
+		robot_state_publisher_node,
 	])
