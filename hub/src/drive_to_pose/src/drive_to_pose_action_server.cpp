@@ -1,14 +1,17 @@
-#include <chrono>
 #include <thread>
 #include <cmath>
 
+#include "hub_interfaces/action/drive_to_pose.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 
-class DriveToPoseServer : public rclcpp : Node
+#include "drive_to_pose/pid.hpp"
+
+class DriveToPoseServer : public rclcpp::Node
 {
-	using DriveToPose = drive_to_pose::action::DriveToPose;
+	using DriveToPose = hub_interfaces::action::DriveToPose;
 	using GoalHandleDTP = rclcpp_action::ServerGoalHandle<DriveToPose>;
 
 	public:
@@ -29,13 +32,13 @@ class DriveToPoseServer : public rclcpp : Node
 
 				//converting from quaternion to tait-bryan angles
 				current_yaw_ = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
-			}
-			odom_sub_ = create_subscription<nav_msgs:msg::Odometry>("odometry/filtered", 10, odom_callback);
+			};
+			odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("odometry/filtered", 10, odom_callback);
 
 			auto handle_goal = [this](const rclcpp_action::GoalUUID & uuid,
 				std::shared_ptr<const DriveToPose::Goal> goal)
 			{
-				RCLCPP_INFO(this->get_logger(), "Recieved goal request with order %d", goal->order);
+				RCLCPP_INFO(this->get_logger(), "Recieved goal request with linear tolerance %f", goal->position_tolerance);
 				(void)uuid;
 				return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 			};
@@ -69,7 +72,7 @@ class DriveToPoseServer : public rclcpp : Node
 	private:
 		rclcpp_action::Server<DriveToPose>::SharedPtr action_server_;
 		rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-		rclcpp::Subscriber<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 		rclcpp::TimerBase::SharedPtr timer_;
 
 		double current_x_ = 0.0;
@@ -77,9 +80,9 @@ class DriveToPoseServer : public rclcpp : Node
 		double current_yaw_ = 0.0;
 
 		//declare PID controllers for each direction
-		PID_x_;
-		PID_y_;
-		PID_yaw_;
+		PID PID_x_;
+		PID PID_y_;
+		PID PID_yaw_;
 
 		void execute(const std::shared_ptr<GoalHandleDTP> goal_handle)
 		{
@@ -95,7 +98,7 @@ class DriveToPoseServer : public rclcpp : Node
 			double x_goal = goal->goal_pose.pose.position.x;
 			double y_goal = goal->goal_pose.pose.position.y;
 
-			const auto &q = goal->target_pose.pose.orientation;
+			const auto &q = goal->goal_pose.pose.orientation;
 
 			double yaw_goal_raw = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 			double yaw_goal = normalize_angle(yaw_goal_raw);
@@ -110,7 +113,7 @@ class DriveToPoseServer : public rclcpp : Node
 				}
 
 				auto current_time = now();
-				double dt = (now_time - prev_time).seconds();
+				double dt = (current_time - prev_time).seconds();
 				prev_time = current_time;
 
 				double x_error = x_goal - current_x_;
@@ -124,7 +127,7 @@ class DriveToPoseServer : public rclcpp : Node
 				{
 					kill_robot();
 					result->success = true;
-					goal->handle->succeed(result);
+					goal_handle->succeed(result);
 					return;
 				}
 
@@ -140,7 +143,7 @@ class DriveToPoseServer : public rclcpp : Node
 				feedback->yaw_error = yaw_error;
 				goal_handle->publish_feedback(feedback);
 
-				rate.sleep();
+				loop_rate.sleep();
 			}
 		}
 
@@ -155,8 +158,8 @@ class DriveToPoseServer : public rclcpp : Node
 			cmd_vel_pub_->publish(cmd_vel);
 			// reset controllers
 			PID_x_.reset();
-			PID_y_reset();
-			PID_yaw_reset();
+			PID_y_.reset();
+			PID_yaw_.reset();
 		}
 
 		double normalize_angle(double angle)
@@ -165,6 +168,7 @@ class DriveToPoseServer : public rclcpp : Node
 			while(angle < -M_PI) angle += 2.0 * M_PI;
 			return angle;
 		}
+};
 
 int main(int argc, char *argv[])
 {
