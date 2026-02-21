@@ -1,0 +1,15 @@
+# Request (goal: move to pose within a certain tolerance)
+geometry_msgs/PoseStamped goal_pose
+float64 position_tolerance
+float64 yaw_tolerance
+---
+# Result (return message when goal is reached) 
+bool success
+geometry_msgs/PoseStamped final_pose
+
+---
+# Feedback
+geometry_msgs/PoseStamped current_pose
+float64 x_error
+float64 y_error
+float64 yaw_error
