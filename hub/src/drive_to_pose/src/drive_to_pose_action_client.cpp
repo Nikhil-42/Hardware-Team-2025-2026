@@ -1,13 +1,21 @@
 #include <chrono>
 
+<<<<<<< HEAD
 #include "dtp_interfaces/action/drive_to_pose.hpp"
+=======
+#include "hub_interfaces/action/drive_to_pose.hpp"
+>>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 #include "rclcpp/rclpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
 class DriveToPoseClient : public rclcpp::Node
 {
 	public:
+<<<<<<< HEAD
 		using DriveToPose = dtp_interfaces::action::DriveToPose;
+=======
+		using DriveToPose = hub_interfaces::action::DriveToPose;
+>>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 		using GoalHandleDTP = rclcpp_action::ClientGoalHandle<DriveToPose>;
 
 		// class constructor to initialize node
@@ -18,11 +26,19 @@ class DriveToPoseClient : public rclcpp::Node
 			this->client_ptr_ = rclcpp_action::create_client<DriveToPose>(this, "drive_to_pose");
 
 			// create timer callback to get pose
+<<<<<<< HEAD
 			auto timer_callback_lambda = [this](){return this->send_goal(); };
 			this->timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback_lambda);
 		}
 
 		void send_goal(const geometry_msgs::msg::PoseStamped & pose, double pos_tol, double yaw_tol)
+=======
+			auto timer_callback_lambda = [this](){return this->send_goal_pose(); };
+			this->timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback_lambda);
+		}
+
+		void send_goal()
+>>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 		{
 			this->timer_->cancel();
 
@@ -32,6 +48,7 @@ class DriveToPoseClient : public rclcpp::Node
 				rclcpp::shutdown();
 			}
 
+<<<<<<< HEAD
 			DriveToPose::Goal goal;
 			goal.target_pose = pose;
 			goal.position_tolerance = pos_tol;
@@ -84,4 +101,10 @@ class DriveToPoseClient : public rclcpp::Node
 		rclcpp_action::Client<DriveToPose>::SharedPtr client_ptr_;
 		rclcpp::TimerBase::SharedPtr timer_;
 };
+=======
+			auto goal::msg =
+
+		}
+}
+>>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 
