@@ -17,9 +17,9 @@ class PID
 			prev_error_ = error;
 
 			// clamp output (may need to clamp integator later)
-			if(std::abs(output) > max_output)
+			if(std::abs(output) > max_output_)
 			{
-				output = (output < 0) ? -max_output : max_output;
+				output = (output < 0) ? -max_output_ : max_output_;
 			}
 			return output;
 		}
@@ -27,7 +27,7 @@ class PID
 		void reset()
 		{
 			integrator_ = 0.0;
-			prev_error = 0.0;
+			prev_error_ = 0.0;
 		}
 
 	private:
@@ -38,4 +38,4 @@ class PID
 		double max_output_;
 		double integrator_;
 		double prev_error_;
-}
+};

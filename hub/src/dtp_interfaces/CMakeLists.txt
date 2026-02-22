@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(drive_to_pose)
+project(dtp_interfaces)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,28 +7,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_action REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(dtp_interfaces REQUIRED)
-
-add_executable(drive_to_pose_server
-	src/drive_to_pose_action_server.cpp)
-
-target_include_directories(drive_to_pose_server PRIVATE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:include>)
-
-ament_target_dependencies(drive_to_pose_server dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs)
-
-install(TARGETS drive_to_pose_server
-	DESTINATION lib/${PROJECT_NAME}
-)
-
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "action/DriveToPose.action"
+  DEPENDENCIES geometry_msgs
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
