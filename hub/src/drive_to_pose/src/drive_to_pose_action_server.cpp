@@ -1,11 +1,9 @@
 #include <thread>
 #include <cmath>
 
-<<<<<<< HEAD
+
 #include "dtp_interfaces/action/drive_to_pose.hpp"
-=======
-#include "hub_interfaces/action/drive_to_pose.hpp"
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
+
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -15,11 +13,8 @@
 
 class DriveToPoseServer : public rclcpp::Node
 {
-<<<<<<< HEAD
+
 	using DriveToPose = dtp_interfaces::action::DriveToPose;
-=======
-	using DriveToPose = hub_interfaces::action::DriveToPose;
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 	using GoalHandleDTP = rclcpp_action::ServerGoalHandle<DriveToPose>;
 
 	public:

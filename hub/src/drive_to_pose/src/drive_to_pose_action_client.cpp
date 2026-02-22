@@ -1,21 +1,16 @@
 #include <chrono>
 
-<<<<<<< HEAD
 #include "dtp_interfaces/action/drive_to_pose.hpp"
-=======
-#include "hub_interfaces/action/drive_to_pose.hpp"
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
-#include "rclcpp/rclpp.hpp"
+
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "nav_msgs/msg/odometry.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 
 class DriveToPoseClient : public rclcpp::Node
 {
 	public:
-<<<<<<< HEAD
 		using DriveToPose = dtp_interfaces::action::DriveToPose;
-=======
-		using DriveToPose = hub_interfaces::action::DriveToPose;
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 		using GoalHandleDTP = rclcpp_action::ClientGoalHandle<DriveToPose>;
 
 		// class constructor to initialize node
@@ -26,33 +21,27 @@ class DriveToPoseClient : public rclcpp::Node
 			this->client_ptr_ = rclcpp_action::create_client<DriveToPose>(this, "drive_to_pose");
 
 			// create timer callback to get pose
-<<<<<<< HEAD
-			auto timer_callback_lambda = [this](){return this->send_goal(); };
-			this->timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback_lambda);
+			goal_pose_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+				"/goal_pose",
+				10,
+				[this](const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+				{
+					this->send_goal(*msg, 0.01, 0.01);
+				});
 		}
 
 		void send_goal(const geometry_msgs::msg::PoseStamped & pose, double pos_tol, double yaw_tol)
-=======
-			auto timer_callback_lambda = [this](){return this->send_goal_pose(); };
-			this->timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback_lambda);
-		}
-
-		void send_goal()
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
 		{
-			this->timer_->cancel();
-
 			if(!this->client_ptr_->wait_for_action_server())
 			{
 				RCLCPP_ERROR(this->get_logger(), "Action server not available after timeout");
 				rclcpp::shutdown();
 			}
 
-<<<<<<< HEAD
-			DriveToPose::Goal goal;
-			goal.target_pose = pose;
-			goal.position_tolerance = pos_tol;
-			goal.yaw_tolerance = yaw_tol;
+			DriveToPose::Goal goal_msg;
+			goal_msg.goal_pose = pose;
+			goal_msg.position_tolerance = pos_tol;
+			goal_msg.yaw_tolerance = yaw_tol;
 
 			RCLCPP_INFO(this->get_logger(), "Sending goal");
 
@@ -99,12 +88,13 @@ class DriveToPoseClient : public rclcpp::Node
 		}
 	private:
 		rclcpp_action::Client<DriveToPose>::SharedPtr client_ptr_;
-		rclcpp::TimerBase::SharedPtr timer_;
+		rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_pose_sub_;
 };
-=======
-			auto goal::msg =
 
-		}
+int main(int argc, char *argv[])
+{
+	rclcpp::init(argc, argv);
+	rclcpp::spin(std::make_shared<DriveToPoseClient>(rclcpp::NodeOptions()));
+	rclcpp::shutdown();
+	return 0;
 }
->>>>>>> f85e9d60a3f9b9e54e0df42ecb0a464a98d85ba5
-

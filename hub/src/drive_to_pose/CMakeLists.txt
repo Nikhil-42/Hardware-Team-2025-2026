@@ -16,13 +16,23 @@ find_package(dtp_interfaces REQUIRED)
 add_executable(drive_to_pose_server
 	src/drive_to_pose_action_server.cpp)
 
+add_executable(drive_to_pose_client
+	src/drive_to_pose_action_client.cpp)
+
 target_include_directories(drive_to_pose_server PRIVATE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>)
+target_include_directories(drive_to_pose_client PRIVATE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	$<INSTALL_INTERFACE:include>)
 
 ament_target_dependencies(drive_to_pose_server dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs)
+ament_target_dependencies(drive_to_pose_client dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs)
 
 install(TARGETS drive_to_pose_server
+	DESTINATION lib/${PROJECT_NAME}
+)
+install(TARGETS drive_to_pose_client
 	DESTINATION lib/${PROJECT_NAME}
 )
 
