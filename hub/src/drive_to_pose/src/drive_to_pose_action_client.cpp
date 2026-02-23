@@ -28,6 +28,7 @@ class DriveToPoseClient : public rclcpp::Node
 				{
 					this->send_goal(*msg, 0.01, 0.01);
 				});
+			RCLCPP_INFO(this->get_logger(), "Action client was instantiated");
 		}
 
 		void send_goal(const geometry_msgs::msg::PoseStamped & pose, double pos_tol, double yaw_tol)
@@ -71,6 +72,7 @@ class DriveToPoseClient : public rclcpp::Node
 				switch(result.code)
 				{
 					case rclcpp_action::ResultCode::SUCCEEDED:
+						RCLCPP_INFO(this->get_logger(), "Reached pose goal!");
 						break;
 					case rclcpp_action::ResultCode::ABORTED:
 						RCLCPP_ERROR(this->get_logger(), "Goal was aborted");

@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Finger.srv"
   "srv/Gate.srv"
   "srv/Enable.srv"
+  "srv/ArmStartLight.srv"
   DEPENDENCIES # Add packages that above messages depend on
 )
 
