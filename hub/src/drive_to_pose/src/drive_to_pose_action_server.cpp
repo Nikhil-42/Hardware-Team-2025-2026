@@ -121,8 +121,9 @@ class DriveToPoseServer : public rclcpp::Node
 
 				double x_error = x_goal - current_x_;
 				double y_error = y_goal - current_y_;
-				double yaw_error = yaw_goal - current_yaw_;
+				double yaw_error = normalize_angle(yaw_goal - current_yaw_);
 
+				RCLCPP_INFO(this->get_logger(), "x_error: %f y_error: %f yaw_error: %f", x_error, y_error, yaw_error);
 				// if very close to pose goal, end action
 				if(std::abs(x_error) < goal->position_tolerance &&
 				   std::abs(y_error) < goal->position_tolerance &&
@@ -140,7 +141,7 @@ class DriveToPoseServer : public rclcpp::Node
 				cmd_vel.angular.z = PID_yaw_.compute(yaw_error, dt);
 
 				cmd_vel_pub_->publish(cmd_vel);
-
+				//RCLCPP_INFO(this->get_logger(), "Published /cmd_vel from server");
 				feedback->x_error = x_error;
 				feedback->y_error = y_error;
 				feedback->yaw_error = yaw_error;

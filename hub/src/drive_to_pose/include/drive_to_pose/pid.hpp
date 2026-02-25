@@ -21,6 +21,7 @@ class PID
 			{
 				output = (output < 0) ? -max_output_ : max_output_;
 			}
+			//printf("Integrator: %f\t Derivative: %f\t dt: %f\n", integrator_, derivative, dt);
 			return output;
 		}
 
