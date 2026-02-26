@@ -119,11 +119,12 @@ void calculate_rpms(float* rpms)
 {
         // determine number of encoder counts since last sample on each channel 
         // note that FL and RL are inverted because of the wheel geoemetry (i.e., ccw rotation results in positive displacement)
-        encoder_counts_difference[FL] = - (cumulative_encoder_counts[FL] - previous_encoder_counts[FL]);
+        encoder_counts_difference[FL] = -(cumulative_encoder_counts[FL] - previous_encoder_counts[FL]);
         encoder_counts_difference[FR] = cumulative_encoder_counts[FR] - previous_encoder_counts[FR];
-        encoder_counts_difference[RL] = - (cumulative_encoder_counts[RL] - previous_encoder_counts[RL]);
+        encoder_counts_difference[RL] = -(cumulative_encoder_counts[RL] - previous_encoder_counts[RL]);
         encoder_counts_difference[RR] = cumulative_encoder_counts[RR] - previous_encoder_counts[RR];
 
+        //printf("RPMs \t Encoder counts\n");
         for(int i = 0; i < WHEEL_COUNT; i++)
         {
                 // if enough time has passed without an encoder tick, assume wheel is not moving
@@ -142,7 +143,8 @@ void calculate_rpms(float* rpms)
                         rpms[i] = (float)direction[i] * (float)inverter[i] * 60.0f * 1000000.0f * 2 / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
                 }
                 //printf("ticks per interval: %f", (float)tick_dt[i]);
-                //printf("RPMs: %f\n", rpms[i]);
+                //printf("%f\t", rpms[i]);
+                //printf("%" PRId64 "\n", cumulative_encoder_counts[i]);
                 previous_encoder_counts[i] = cumulative_encoder_counts[i];
         }
 }

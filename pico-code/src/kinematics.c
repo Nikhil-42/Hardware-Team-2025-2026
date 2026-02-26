@@ -29,6 +29,7 @@ void solve_mecanum_ik(robot_velocities_t* robo_v, float* wheel_angular_velocitie
         wheel_angular_velocities[RL] = (RADPS_TO_RPM_CONV) * ((1.0f/R) * (robo_v->vx + robo_v->vy - (Lx + Ly) * robo_v->wz));
         wheel_angular_velocities[RR] = (RADPS_TO_RPM_CONV) * ((1.0f/R) * (robo_v->vx - robo_v->vy + (Lx + Ly) * robo_v->wz));
         
+
         for(int i = 0; i < WHEEL_COUNT; i++)
         {
                 //printf("[ik] solved wheel %d angular velocity: %f\n", i, wheel_angular_velocities[i]); 
