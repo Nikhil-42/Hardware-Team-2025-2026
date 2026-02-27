@@ -3,7 +3,7 @@ ekf_filter_node:
   ros__parameters:
     frequency: 30.0
 #if true, ignores small variations in ground plane and assume a 2d planar world
-    two_d_mode: false
+    two_d_mode: true
     publish_acceleration: true
 # if true, publishes transformation over /tf topic
     publish_tf: true
