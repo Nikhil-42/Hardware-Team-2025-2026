@@ -21,9 +21,9 @@ class DriveToPoseServer : public rclcpp::Node
 		// constructor for class that initializes the node as the action server
 		explicit DriveToPoseServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
 		  : Node("drive_to_pose_action_server", options),
-		    PID_x_(1.0, 0.0, 0.0, 0.0, 0.5),
-		    PID_y_(1.0, 0.0, 0.0, 0.0, 0.5),
-		    PID_yaw_(1.0, 0.0, 0.0, 0.0, 2.0)
+		    PID_x_(1.5, 0.0, 0.0,  0.0, 0.5),
+		    PID_y_(1.5, 0.0, 0.0, 0.0, 0.5),
+		    PID_yaw_(1.5, 0.0, 0.0, 0,0, 2.0)
 		{
 			cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
 
@@ -123,22 +123,27 @@ class DriveToPoseServer : public rclcpp::Node
 				double y_error = y_goal - current_y_;
 				double yaw_error = normalize_angle(yaw_goal - current_yaw_);
 
-				RCLCPP_INFO(this->get_logger(), "x_error: %f y_error: %f yaw_error: %f", x_error, y_error, yaw_error);
+				double distance_error = std::sqrt(x_error * x_error + y_error * y_error);
+
+				RCLCPP_DEBUG(this->get_logger(), "x_error: %f y_error: %f yaw_error: %f", x_error, y_error, yaw_error);
 				// if very close to pose goal, end action
-				if(std::abs(x_error) < goal->position_tolerance &&
-				   std::abs(y_error) < goal->position_tolerance &&
+				if(distance_error < position tolernace &&
 				   std::abs(yaw_error) < goal->yaw_tolerance)
 				{
 					kill_robot();
 					result->success = true;
-					goal_handle->succeed(result);
+					goal_handle-=>succeed(result);
 					return;
 				}
 
+				// rotate errors into base_link (body_ frame)
+				double x_error_baselink = std::cos(yaw_error) * x_error + std::sin(yaw_error) * y_error;
+				double y_error_baselink = -std::sin(yaw_error) * x_error + std::cos(yaw_error) * y_error;
+
 				geometry_msgs::msg::Twist cmd_vel;
-				cmd_vel.linear.x = PID_x_.compute(x_error, dt);
-				cmd_vel.linear.y = PID_y_.compute(y_error, dt);
-				cmd_vel.angular.z = PID_yaw_.compute(yaw_error, dt);
+				cmd_vel.linear.x = PID_x_.compute(x_goal, x_error_baselink, dt);
+				cmd_vel.linear.y = PID_y_.compute(y_goal, y_error_baselink, dt);
+				cmd_vel.angular.z = PID_yaw_.compute(yaw_goal, yaw_error, dt);
 
 				cmd_vel_pub_->publish(cmd_vel);
 				//RCLCPP_INFO(this->get_logger(), "Published /cmd_vel from server");
@@ -159,7 +164,12 @@ class DriveToPoseServer : public rclcpp::Node
 			cmd_vel.linear.y = 0;
 			cmd_vel.angular.z = 0;
 
-			cmd_vel_pub_->publish(cmd_vel);
+			for(int i = 0; i < 5; i++)
+			{
+				cmd_vel_pub_->publish(cmd_vel);
+				rclcpp::sleep_for(std::chrono::milliseconds(10));
+			}
+
 			// reset controllers
 			PID_x_.reset();
 			PID_y_.reset();
