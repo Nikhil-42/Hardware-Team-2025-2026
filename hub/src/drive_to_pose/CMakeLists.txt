@@ -12,6 +12,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(dtp_interfaces REQUIRED)
+find_package(turtlesim REQUIRED)
 
 add_executable(drive_to_pose_server
 	src/drive_to_pose_action_server.cpp)
@@ -26,8 +27,8 @@ target_include_directories(drive_to_pose_client PRIVATE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	$<INSTALL_INTERFACE:include>)
 
-ament_target_dependencies(drive_to_pose_server dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs)
-ament_target_dependencies(drive_to_pose_client dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs)
+ament_target_dependencies(drive_to_pose_server dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs turtlesim)
+ament_target_dependencies(drive_to_pose_client dtp_interfaces rclcpp rclcpp_action nav_msgs geometry_msgs turtlesim)
 
 install(TARGETS drive_to_pose_server
 	DESTINATION lib/${PROJECT_NAME}
