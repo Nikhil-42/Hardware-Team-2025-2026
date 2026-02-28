@@ -11,7 +11,14 @@ public:
     
     static BT::PortsList providedPorts()
     {
-        return providedBasicPorts({ InputPort<std::string>("server_name", "/drive_to_pose"), InputPort<double>("x"), InputPort<double>("y"), InputPort<double>("yaw") });
+        return providedBasicPorts({
+            InputPort<std::string>("server_name", "/drive_to_pose"),
+            InputPort<double>("x"),
+            InputPort<double>("y"),
+            InputPort<double>("yaw"),
+            InputPort<double>("linear_tolerance", 0.05, "Tolerance in meters for the position"),
+            InputPort<double>("angular_tolerance", 5.0, "Tolerance in degrees for the yaw"),
+        });
     }
 
     bool setGoal(Goal& goal) override;

@@ -26,6 +26,13 @@ class ManipulationService(Node):
             Motor(22, 27),  # Finger 4
         ]
 
+        self.finger_map = {
+            3: 0,
+            7: 2,
+            8: 1,
+            -1: 3,
+        }
+
         self.gate_servos = [
             Servo(5, min_pulse_width=0.0006, max_pulse_width=0.0014),  # Gate 1
             Servo(6, min_pulse_width=0.0016, max_pulse_width=0.0024),  # Gate 2
@@ -58,12 +65,12 @@ class ManipulationService(Node):
         return response
 
     def eject(self, request: Finger.Request, response: Finger.Response):
-        if request.idx < 1 or request.idx > 4:
-            self.get_logger().info('Invalid finger index: %d' % (request.idx))
+        if request.idx not in self.finger_map:
+            self.get_logger().info('Invalid finger: %d' % (request.idx))
             response.success = False
             return response
         
-        finger_index = request.idx - 1
+        finger_index = self.finger_map[request.idx]
         m = self.finger_motors[finger_index]
         
         m.forward()
@@ -75,12 +82,12 @@ class ManipulationService(Node):
         
 
     def retract(self, request: Finger.Request, response: Finger.Response):
-        if request.idx < 1 or request.idx > 4:
-            self.get_logger().info('Invalid finger index: %d' % (request.idx))
+        if request.idx not in self.finger_map:
+            self.get_logger().info('Invalid finger: %d' % (request.idx))
             response.success = False
             return response
         
-        finger_index = request.idx - 1
+        finger_index = self.finger_map[request.idx]
         m = self.finger_motors[finger_index]
         
         m.backward()
@@ -91,19 +98,20 @@ class ManipulationService(Node):
         return response
 
     def click(self, request: Finger.Request, response: Finger.Response):
-        if request.idx < 1 or request.idx > 4:
-            self.get_logger().info('Invalid finger index: %d' % (request.idx))
+        if request.idx not in self.finger_map:
+            self.get_logger().info('Invalid finger: %d' % (request.idx))
             response.success = False
             return response
         
-        finger_index = request.idx - 1
+        finger_index = self.finger_map[request.idx]
         m = self.finger_motors[finger_index]
         self.get_logger().info(f"Beep [pin {request.idx}]")
         m.forward()
-        sleep(0.25)
+        sleep(0.3)
         m.backward()
         sleep(0.5)
         m.stop()
+        sleep(0.5)
         self.get_logger().info(f"Boop [pin {request.idx}]")
         response.success = True        
         return response

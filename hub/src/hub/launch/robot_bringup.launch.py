@@ -31,6 +31,12 @@ def generate_launch_description():
 			output='screen',
 			parameters=[ekf_path]
 	)
+	static_tf = Node(
+		package='tf2_ros',
+		executable='static_transform_publisher',
+		arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+	)
+
 	chassis_node = Node(
 		package = 'hub',
 		executable = 'chassis',
@@ -43,6 +49,13 @@ def generate_launch_description():
 		name = 'drive_to_pose_server',
 		output = 'screen'
 	)
+	services = Node(
+		package = 'py_hub',
+		executable = 'service',
+		name = 'services',
+		output = 'screen'
+	)
+
 	camera_node = Node(
 		package = 'camera_ros',
 		executable = 'camera_node',
@@ -59,16 +72,25 @@ def generate_launch_description():
 			'threshold': 800.0
 		}],
 	)
-	services = Node(
-		package = 'py_hub',
-		executable = 'service',
-		name = 'services',
-		output = 'screen'
-	)
-	static_tf = Node(
-		package='tf2_ros',
-		executable='static_transform_publisher',
-		arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+
+	behavior_tree_node = Node(
+		package = 'behaviors',
+		executable = 'bt_executor',
+		name = 'behavior_tree_node',
+		output = 'screen',
+		parameters=[{
+			'action_name': "behavior_server", # Optional (defaults to `bt_action_server`)
+			'tick_frequency': 100, # Optional (defaults to 100 Hz)
+			'groot2_port': 1667, # Optional (defaults to 1667)
+			'ros_plugins_timeout': 1000, # Optional (defaults 1000 ms)
+			'plugins': [
+				'behaviortree_cpp/bt_plugins',
+				'behaviors/bt_plugins',
+			],
+			'behavior_trees': [
+				'behaviors/behavior_trees',
+			],
+		}]
 	)
 
 	enable = Node(
@@ -91,5 +113,6 @@ def generate_launch_description():
 		camera_node,
 		start_led_server,
 		services,
+		behavior_tree_node,
 		robot_state_publisher_node,
 	])

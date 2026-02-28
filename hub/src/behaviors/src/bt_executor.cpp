@@ -48,6 +48,7 @@ public:
     BT::RosNodeParams drive_to_pose_params;
     drive_to_pose_params.nh = node();                 // the rclcpp::Node::SharedPtr
     drive_to_pose_params.default_port_value = "/drive_to_pose";
+    drive_to_pose_params.server_timeout = std::chrono::seconds(60);
     factory.registerNodeType<DriveToPoseNode>("DriveToPose", drive_to_pose_params);
 
     BT::RosNodeParams finger_params;

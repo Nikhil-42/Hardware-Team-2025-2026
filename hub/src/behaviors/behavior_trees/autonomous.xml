@@ -1,0 +1,31 @@
+<root BTCPP_format="4">
+  <BehaviorTree ID="Keypad">
+    <Sequence>
+      <DriveToPose x="0.84" y="0.50" yaw="0" angular_tolerance="2"/>
+      <DriveToPose x="0.84" y="0.05" yaw="0" linear_tolerance="0.01" angular_tolerance="2"/>
+      <Finger idx="7" action="click"/>
+      <Finger idx="3" action="click"/>
+      <Finger idx="7" action="click"/>
+      <Finger idx="3" action="click"/>
+      <Finger idx="8" action="click"/>
+      <Finger idx="-1" action="click"/>
+      <DriveToPose x="0.84" y="0.50" yaw="0"/>
+    </Sequence>
+  </BehaviorTree>
+  <BehaviorTree ID="Button">
+    <Sequence>
+      <DriveToPose x="0.0" y="0.50" yaw="180"/>
+      <DriveToPose x="0.0" y="0.80" yaw="180"/>
+      <Finger idx="8" action="click"/>
+      <Finger idx="8" action="click"/>
+      <Finger idx="8" action="click"/>
+      <DriveToPose x="0.0" y="0.50" yaw="180"/>
+    </Sequence>
+  </BehaviorTree>
+  <BehaviorTree ID="Full">
+    <Sequence>
+      <SubTree ID="Keypad"/>
+      <SubTree ID="Button"/>
+    </Sequence>
+  </BehaviorTree>
+</root>

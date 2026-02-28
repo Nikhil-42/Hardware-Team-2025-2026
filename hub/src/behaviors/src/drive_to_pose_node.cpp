@@ -13,6 +13,9 @@ bool DriveToPoseNode::setGoal(RosActionNode::Goal& goal)
   goal.pose.orientation.z = std::sin(yaw / 2);
   goal.pose.orientation.w = std::cos(yaw / 2);
 
+  goal.position_tolerance = getInput<double>("linear_tolerance").value();
+  goal.yaw_tolerance = getInput<double>("angular_tolerance").value() / 180 * PI;
+
   return true;
 }
 
