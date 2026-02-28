@@ -11,11 +11,13 @@
   <exec_depend>robot_localization</exec_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
   <depend>std_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>ament_index_python</depend>
   <depend>launch_ros</depend>
   <depend>launch</depend> 
+  <depend>hub_interfaces</depend>
 
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>

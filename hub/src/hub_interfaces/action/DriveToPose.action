@@ -1,5 +1,5 @@
 # Request (goal: move to pose within a certain tolerance)
-geometry_msgs/PoseStamped goal_pose
+geometry_msgs/Pose goal_pose
 float64 position_tolerance
 float64 yaw_tolerance
 ---

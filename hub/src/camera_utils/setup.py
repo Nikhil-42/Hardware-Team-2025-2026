@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'start_light'
+package_name = 'camera_utils'
 
 setup(
     name=package_name,
@@ -10,6 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', ['launch/start_light.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,7 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-	   'start_light_node = start_light.start_light_node:main',
+	   'start_light_node = camera_utils.start_light_node:main',
         ],
     },
 )

@@ -37,6 +37,28 @@ def generate_launch_description():
 		name = 'chassis_node',
 		output = 'screen'
 	)
+	drive_to_pose_server = Node(
+		package = 'hub',
+		executable = 'drive_to_pose',
+		name = 'drive_to_pose_server',
+		output = 'screen'
+	)
+	camera_node = Node(
+		package = 'camera_ros',
+		executable = 'camera_node',
+		name = 'camera',
+		output = 'screen',
+	)
+	start_led_server = Node(
+		package = 'camera_utils',
+		executable = 'start_light_node',
+		name = 'start_light_node',
+		output = 'screen',
+		parameters=[{
+			'image_topic': '/camera/image_raw',
+			'threshold': 800.0
+		}],
+	)
 	services = Node(
 		package = 'py_hub',
 		executable = 'service',
@@ -65,6 +87,9 @@ def generate_launch_description():
 		# joint_state_publisher_node,
 		robot_localization_node,
 		chassis_node,
+		drive_to_pose_server,
+		camera_node,
+		start_led_server,
 		services,
 		robot_state_publisher_node,
 	])

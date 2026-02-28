@@ -2,44 +2,42 @@
 #include <cmath>
 
 
-#include "dtp_interfaces/action/drive_to_pose.hpp"
+#include "hub_interfaces/action/drive_to_pose.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
-#include "turtlesim/msg/pose.hpp"
 
-#include "drive_to_pose/pid.hpp"
+#include "hub/pid.hpp"
 
 class DriveToPoseServer : public rclcpp::Node
 {
 
-	using DriveToPose = dtp_interfaces::action::DriveToPose;
+	using DriveToPose = hub_interfaces::action::DriveToPose;
 	using GoalHandleDTP = rclcpp_action::ServerGoalHandle<DriveToPose>;
 
 	public:
+		// velocity clamps: vx = 0.16, vy = 0.18, wz = 1.0
 		// constructor for class that initializes the node as the action server
 		explicit DriveToPoseServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
 		  : Node("drive_to_pose_action_server", options),
-		    PID_x_(1.0, 0.0, 0.0, 0.5),
-		    PID_y_(1.0, 0.0, 0.0, 0.5),
-		    PID_yaw_(1.0, 0.0, 0.0, 2.0)
+		    PID_x_(1.5, 0.0, 0.0, 0.30),
+		    PID_y_(1.5, 0.0, 0.0, 0.30),
+		    PID_yaw_(1.5, 0.0, 0.0, 1.5)
 		{
-			cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("/turtle1/cmd_vel", 10);
+			cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
 
-			auto odom_callback = [this](turtlesim::msg::Pose odom) -> void
+			auto odom_callback = [this](nav_msgs::msg::Odometry odom) -> void
 			{
-				//current_x_ = odom.pose.pose.position.x;
-				//current_y_ = odom.pose.pose.position.y;
-				//const auto q = odom.pose.pose.orientation;
-				current_x_ = odom.x;
-				current_x_ = odom.y;
-				current_yaw_ = odom.theta;
+				current_x_ = odom.pose.pose.position.x;
+				current_y_ = odom.pose.pose.position.y;
+				const auto q = odom.pose.pose.orientation;
+
 				//converting from quaternion to tait-bryan angles
-				//current_yaw_ = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
+				current_yaw_ = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 			};
-			odom_sub_ = create_subscription<turtlesim::msg::Pose>("/turtle1/pose", 10, odom_callback);
+			odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("odometry/filtered", 10, odom_callback);
 
 			auto handle_goal = [this](const rclcpp_action::GoalUUID & uuid,
 				std::shared_ptr<const DriveToPose::Goal> goal)
@@ -78,7 +76,7 @@ class DriveToPoseServer : public rclcpp::Node
 	private:
 		rclcpp_action::Server<DriveToPose>::SharedPtr action_server_;
 		rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-		rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr odom_sub_;
+		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 		rclcpp::TimerBase::SharedPtr timer_;
 
 		double current_x_ = 0.0;
@@ -93,7 +91,7 @@ class DriveToPoseServer : public rclcpp::Node
 		void execute(const std::shared_ptr<GoalHandleDTP> goal_handle)
 		{
 			RCLCPP_INFO(this->get_logger(), "Executing goal");
-			rclcpp::Rate loop_rate(50); // 50 Hz
+			rclcpp::Rate loop_rate(500); // 50 Hz
 
 			auto result = std::make_shared<DriveToPose::Result>();
 			auto feedback = std::make_shared<DriveToPose::Feedback>();
@@ -101,10 +99,10 @@ class DriveToPoseServer : public rclcpp::Node
 			auto prev_time = now();
 
 			const auto goal = goal_handle->get_goal();
-			double x_goal = goal->goal_pose.pose.position.x;
-			double y_goal = goal->goal_pose.pose.position.y;
+			double x_goal = goal->goal_pose.position.x;
+			double y_goal = goal->goal_pose.position.y;
 
-			const auto &q = goal->goal_pose.pose.orientation;
+			const auto &q = goal->goal_pose.orientation;
 
 			double yaw_goal_raw = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 			double yaw_goal = normalize_angle(yaw_goal_raw);
@@ -126,10 +124,11 @@ class DriveToPoseServer : public rclcpp::Node
 				double y_error = y_goal - current_y_;
 				double yaw_error = normalize_angle(yaw_goal - current_yaw_);
 
-				RCLCPP_INFO(this->get_logger(), "x_error: %f y_error: %f yaw_error: %f", x_error, y_error, yaw_error);
+				double distance_error = std::sqrt(x_error * x_error + y_error * y_error);
+
+				RCLCPP_DEBUG(this->get_logger(), "x_error: %f y_error: %f yaw_error: %f", x_error, y_error, yaw_error);
 				// if very close to pose goal, end action
-				if(std::abs(x_error) < goal->position_tolerance &&
-				   std::abs(y_error) < goal->position_tolerance &&
+				if(distance_error < goal->position_tolerance &&
 				   std::abs(yaw_error) < goal->yaw_tolerance)
 				{
 					kill_robot();
@@ -138,9 +137,13 @@ class DriveToPoseServer : public rclcpp::Node
 					return;
 				}
 
+				// rotate errors into base_link (body_ frame)
+				double x_error_baselink = std::cos(current_yaw_) * x_error + std::sin(current_yaw_) * y_error;
+				double y_error_baselink = -std::sin(current_yaw_) * x_error + std::cos(current_yaw_) * y_error;
+
 				geometry_msgs::msg::Twist cmd_vel;
-				cmd_vel.linear.x = PID_x_.compute(x_error, dt);
-				cmd_vel.linear.y = PID_y_.compute(y_error, dt);
+				cmd_vel.linear.x = PID_x_.compute(x_error_baselink, dt);
+				cmd_vel.linear.y = PID_y_.compute(y_error_baselink, dt);
 				cmd_vel.angular.z = PID_yaw_.compute(yaw_error, dt);
 
 				cmd_vel_pub_->publish(cmd_vel);
@@ -162,7 +165,12 @@ class DriveToPoseServer : public rclcpp::Node
 			cmd_vel.linear.y = 0;
 			cmd_vel.angular.z = 0;
 
-			cmd_vel_pub_->publish(cmd_vel);
+			for(int i = 0; i < 5; i++)
+			{
+				cmd_vel_pub_->publish(cmd_vel);
+				rclcpp::sleep_for(std::chrono::milliseconds(10));
+			}
+
 			// reset controllers
 			PID_x_.reset();
 			PID_y_.reset();
