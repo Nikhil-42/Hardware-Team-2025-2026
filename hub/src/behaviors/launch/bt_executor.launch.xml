@@ -1,0 +1,11 @@
+<launch>
+  <arg name="sleep_server" default="true"/>
+
+  <node pkg="behaviors" exec="bt_executor" output="screen">
+    <param from="$(find-pkg-share behaviors)/config/bt_executor.yaml"/>
+  </node>
+
+  <group if="$(var sleep_server)">
+    <node pkg="behaviors" exec="sleep_server" output="screen"/>
+  </group>
+</launch>
