@@ -11,9 +11,12 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#include <rclcpp/executors.hpp>
 #include <behaviortree_ros2/tree_execution_server.hpp>
 #include <behaviortree_cpp/loggers/bt_cout_logger.h>
 
+#include "behaviors/finger_node.hpp"
+#include "behaviors/drive_to_pose_node.hpp"
 #include <std_msgs/msg/float32.hpp>
 
 // Example that shows how to customize TreeExecutionServer.
@@ -37,6 +40,20 @@ public:
     // global blackboard happen in two different threads.
     // The former runs in the MultiThreadedExecutor, while the latter in the thread created
     // by TreeExecutionServer. But this is OK because the blackboard is thread-safe.
+  }
+
+  virtual void registerNodesIntoFactory(BT::BehaviorTreeFactory& factory)
+  {
+    // Create the RosNodeParams the BT ROS2 nodes need
+    BT::RosNodeParams drive_to_pose_params;
+    drive_to_pose_params.nh = node();                 // the rclcpp::Node::SharedPtr
+    drive_to_pose_params.default_port_value = "/drive_to_pose";
+    factory.registerNodeType<DriveToPoseNode>("DriveToPose", drive_to_pose_params);
+
+    BT::RosNodeParams finger_params;
+    finger_params.nh = node();                 // the rclcpp::Node::SharedPtr
+    finger_params.default_port_value = "/click";
+    factory.registerNodeType<FingerNode>("Finger", finger_params);
   }
 
   void onTreeCreated(BT::Tree& tree) override

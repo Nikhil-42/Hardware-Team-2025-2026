@@ -99,10 +99,10 @@ class DriveToPoseServer : public rclcpp::Node
 			auto prev_time = now();
 
 			const auto goal = goal_handle->get_goal();
-			double x_goal = goal->goal_pose.position.x;
-			double y_goal = goal->goal_pose.position.y;
+			double x_goal = goal->pose.position.x;
+			double y_goal = goal->pose.position.y;
 
-			const auto &q = goal->goal_pose.orientation;
+			const auto &q = goal->pose.orientation;
 
 			double yaw_goal_raw = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 			double yaw_goal = normalize_angle(yaw_goal_raw);

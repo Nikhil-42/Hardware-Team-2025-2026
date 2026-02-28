@@ -4,7 +4,7 @@ project(behaviors)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
+find_package(rclcpp REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(btcpp_ros2_interfaces REQUIRED)
@@ -14,52 +14,42 @@ find_package(hub_interfaces REQUIRED)
 
 set(THIS_PACKAGE_DEPS
     behaviortree_ros2::behaviortree_ros2
+    ${rclcpp_TARGETS}
+    ${btcpp_ros2_interfaces_TARGETS}
     ${std_msgs_TARGETS}
     ${std_srvs_TARGETS}
-    ${btcpp_ros2_interfaces_TARGETS}
     ${hub_interfaces_TARGETS} )
+
+######################################################
+# Static library for custom TreeNodes
+add_library(behaviors_nodes STATIC
+  src/drive_to_pose_node.cpp
+  src/finger_node.cpp
+)
+target_include_directories(behaviors_nodes PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_link_libraries(behaviors_nodes ${THIS_PACKAGE_DEPS})
 
 ######################################################
 # Simple example showing how to use and customize the BtExecutionServer
 add_executable(bt_executor src/bt_executor.cpp)
+target_include_directories(bt_executor PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_link_libraries(bt_executor behaviors_nodes)
 target_link_libraries(bt_executor ${THIS_PACKAGE_DEPS})
 
 ######################################################
-# Build an Action Client that calls the sleep action (STATIC version)
+# Build the (Plugin)
 
-add_executable(sleep_client
-  src/sleep_action.cpp
-  src/sleep_client.cpp)
-target_include_directories(sleep_client PUBLIC 
+add_library(bt_nodes SHARED src/plugin.cpp)
+target_include_directories(bt_nodes PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_link_libraries(sleep_client ${THIS_PACKAGE_DEPS})
-
-######################################################
-# Build a client that call the sleep action (Plugin version)
-
-add_library(sleep_plugin SHARED src/sleep_action.cpp)
-target_include_directories(sleep_plugin PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_compile_definitions(sleep_plugin PRIVATE  BT_PLUGIN_EXPORT )
-target_link_libraries(sleep_plugin ${THIS_PACKAGE_DEPS})
-
-add_executable(sleep_client_dyn src/sleep_client.cpp)
-target_include_directories(sleep_client PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_compile_definitions(sleep_client_dyn PRIVATE USE_SLEEP_PLUGIN )
-target_link_libraries(sleep_client_dyn sleep_plugin )
-target_link_libraries(sleep_client_dyn ${THIS_PACKAGE_DEPS})
-
-######################################################
-# Build Server
-add_executable(sleep_server src/sleep_server.cpp)
-target_include_directories(sleep_server PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_link_libraries(sleep_server ${THIS_PACKAGE_DEPS})
+target_compile_definitions(bt_nodes PRIVATE  BT_PLUGIN_EXPORT )
+target_link_libraries(bt_executor behaviors_nodes)
+target_link_libraries(bt_nodes ${THIS_PACKAGE_DEPS})
 
 ######################################################
 # Build subscriber_test
@@ -67,28 +57,12 @@ add_executable(subscriber_test src/subscriber_test.cpp)
 target_link_libraries(subscriber_test ${THIS_PACKAGE_DEPS})
 
 ######################################################
-# the SetBool test
-add_executable(bool_client src/bool_client.cpp src/set_bool_node.cpp)
-target_include_directories(bool_client PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_link_libraries(bool_client ${THIS_PACKAGE_DEPS})
-
-add_executable(bool_server src/bool_server.cpp )
-target_link_libraries(bool_server ${THIS_PACKAGE_DEPS})
-
-######################################################
 # INSTALL
 
 install(TARGETS
-  sleep_client
-  sleep_client_dyn
-  sleep_server
-  sleep_plugin
+  bt_nodes 
   subscriber_test
   bt_executor
-  bool_client
-  bool_server
   DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -96,7 +70,7 @@ install(TARGETS
 # INSTALL plugins for other packages to load
 
 install(TARGETS
-  sleep_plugin
+  bt_nodes
   LIBRARY DESTINATION share/${PROJECT_NAME}/bt_plugins
   ARCHIVE DESTINATION share/${PROJECT_NAME}/bt_plugins
   RUNTIME DESTINATION share/${PROJECT_NAME}/bt_plugins

@@ -1,7 +1,12 @@
 <root BTCPP_format="4">
-  <BehaviorTree ID="SleepActionSample">
+  <BehaviorTree ID="Keypad">
     <Sequence>
-      <SaySomething message="start"/>
+      <DriveToPose action_name="drive_to_pose" x="-0.80" y="-0.80" yaw="180"/>
+      <DriveToPose action_name="drive_to_pose" x="-0.80" y="-0.50" yaw="180"/>
+      <Finger id="0" action="click"/>
+      <Finger id="1" action="click"/>
+      <Finger id="2" action="click"/>
+      <Finger id="3" action="click"/>
       <SleepAction name="sleepA" action_name="sleep_service" msec="2000"/>
       <SaySomething message="sleep completed"/>
       <Fallback>
