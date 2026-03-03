@@ -17,8 +17,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Finger.srv"
   "srv/Gate.srv"
   "srv/Enable.srv"
+  "srv/ReportColor.srv"
   "action/DriveToPose.action"
-  "action/StartLight.action"
+  "action/Start.action"
+  "action/DriveWithVel.action"
   DEPENDENCIES # Add packages that above messages depend on
   geometry_msgs
 )

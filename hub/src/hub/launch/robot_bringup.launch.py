@@ -69,7 +69,7 @@ def generate_launch_description():
 		output = 'screen',
 		parameters=[{
 			'image_topic': '/camera/image_raw',
-			'threshold': 800.0
+			'threshold': 500.0
 		}],
 	)
 
@@ -93,12 +93,8 @@ def generate_launch_description():
 		}]
 	)
 
-	enable = Node(
-		package='py_hub',
-		executable='enable',
-		name='enable',
-		output='screen',
-		arguments=['1']
+	enable = ExecuteProcess(
+		cmd=['ros2', 'service', 'call', '/enable', 'hub_interfaces/srv/Enable', '{state: true}'],
 	)
 
 

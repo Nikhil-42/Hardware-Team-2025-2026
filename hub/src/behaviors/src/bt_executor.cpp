@@ -14,10 +14,11 @@
 #include <rclcpp/executors.hpp>
 #include <behaviortree_ros2/tree_execution_server.hpp>
 #include <behaviortree_cpp/loggers/bt_cout_logger.h>
+#include <std_msgs/msg/float32.hpp>
 
 #include "behaviors/finger_node.hpp"
 #include "behaviors/drive_to_pose_node.hpp"
-#include <std_msgs/msg/float32.hpp>
+#include "behaviors/start_node.hpp"
 
 // Example that shows how to customize TreeExecutionServer.
 //
@@ -54,7 +55,13 @@ public:
     BT::RosNodeParams finger_params;
     finger_params.nh = node();                 // the rclcpp::Node::SharedPtr
     finger_params.default_port_value = "/click";
+    finger_params.server_timeout = std::chrono::seconds(10);
     factory.registerNodeType<FingerNode>("Finger", finger_params);
+
+    BT::RosNodeParams start_params;
+    start_params.nh = node();                 // the rclcpp::Node::SharedPtr
+    start_params.default_port_value = "/start_light";
+    factory.registerNodeType<StartNode>("Start", start_params);
   }
 
   void onTreeCreated(BT::Tree& tree) override

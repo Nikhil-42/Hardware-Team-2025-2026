@@ -25,6 +25,8 @@ BT::NodeStatus FingerNode::onResponseReceived(const Response::SharedPtr& respons
 
 BT::NodeStatus FingerNode::onFailure(BT::ServiceNodeErrorCode error)
 {
-  RCLCPP_ERROR(logger(), "Error: %d", error);
+  RCLCPP_ERROR(logger(), "%s: onFailure with error: %s (%d)",
+               name().c_str(), toStr(error), static_cast<int>(error));
   return BT::NodeStatus::FAILURE;
 }
+

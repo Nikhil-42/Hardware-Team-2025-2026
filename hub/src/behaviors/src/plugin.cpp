@@ -2,6 +2,7 @@
 
 #include "behaviors/drive_to_pose_node.hpp"
 #include "behaviors/finger_node.hpp"
+#include "behaviors/start_node.hpp"
 
 extern "C" void BT_RegisterRosNodeFromPlugin(
   BT::BehaviorTreeFactory& factory,
@@ -11,6 +12,7 @@ extern "C" void BT_RegisterRosNodeFromPlugin(
   // In many setups, this works:
   factory.registerNodeType<DriveToPoseNode>("DriveToPose", params);
   factory.registerNodeType<FingerNode>("Finger", params);
+  factory.registerNodeType<StartNode>("Start", params);
 
   // If the above doesn't compile, the wrapper might provide a helper instead.
   // In that case, tell me what compile error you get and I’ll adapt it.

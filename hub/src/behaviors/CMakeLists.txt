@@ -25,6 +25,7 @@ set(THIS_PACKAGE_DEPS
 add_library(behaviors_nodes STATIC
   src/drive_to_pose_node.cpp
   src/finger_node.cpp
+  src/start_node.cpp
 )
 target_include_directories(behaviors_nodes PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
