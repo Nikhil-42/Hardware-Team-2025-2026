@@ -48,19 +48,16 @@ public:
     // Create the RosNodeParams the BT ROS2 nodes need
     BT::RosNodeParams drive_to_pose_params;
     drive_to_pose_params.nh = node();                 // the rclcpp::Node::SharedPtr
-    drive_to_pose_params.default_port_value = "/drive_to_pose";
     drive_to_pose_params.server_timeout = std::chrono::seconds(60);
     factory.registerNodeType<DriveToPoseNode>("DriveToPose", drive_to_pose_params);
 
     BT::RosNodeParams finger_params;
     finger_params.nh = node();                 // the rclcpp::Node::SharedPtr
-    finger_params.default_port_value = "/click";
     finger_params.server_timeout = std::chrono::seconds(10);
     factory.registerNodeType<FingerNode>("Finger", finger_params);
 
     BT::RosNodeParams start_params;
     start_params.nh = node();                 // the rclcpp::Node::SharedPtr
-    start_params.default_port_value = "/start_light";
     factory.registerNodeType<StartNode>("Start", start_params);
   }
 

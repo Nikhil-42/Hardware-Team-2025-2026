@@ -64,8 +64,8 @@ def generate_launch_description():
 	)
 	start_led_server = Node(
 		package = 'camera_utils',
-		executable = 'start_light_node',
-		name = 'start_light_node',
+		executable = 'camera_services',
+		name = 'camera_services_node',
 		output = 'screen',
 		parameters=[{
 			'image_topic': '/camera/image_raw',

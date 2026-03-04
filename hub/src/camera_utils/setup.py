@@ -25,7 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-	   'start_light_node = camera_utils.start_light_node:main',
+	   'camera_services = camera_utils.camera_services:main',
         ],
     },
 )
