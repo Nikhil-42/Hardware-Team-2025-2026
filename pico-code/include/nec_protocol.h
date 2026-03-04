@@ -6,19 +6,20 @@
 #include "hardware/clocks.h"
 #include "hardware/pwm.h"
 
-#define IR_TRANS_PIN 0
+#define IR_TRANS_PIN 10
 
 // ----------------- EARTH TRANSMISSION CODE DEFINES ------------------- //
+
 #define EARTH_ADDR 0xBB
 // a single transmission command takes the form 
 // ( ( ANTENNA upper byte << 4) | COLOR lower byte ) 
 // antenna codes 
-#define ANTENNA_1_gc 0x00
-#define ANTENNA_2_gc 0x30
-#define ANTENNA_3_gc 0x50
-#define ANTENNA_4_gc 0x60
+#define ANTENNA_1_gc 0x00 // button
+#define ANTENNA_2_gc 0x30 // crank
+#define ANTENNA_3_gc 0x50 // pressure plate
+#define ANTENNA_4_gc 0x60 // keypad
 // color codes
-#define RED_gc 0x09
+#define RED_gc 0x09 
 #define GREEN_gc 0x0A
 #define BLUE_gc 0x0C
 #define PURPLE_gc 0x0F
@@ -63,6 +64,14 @@ FUNCTION:
         > interrupts PWM cycle through series of enables and disables based on data information 
 INPUTS:
         > encoded transmission frame 
+*/
+
+bool check_rx_antenna_code(uint8_t rx_c);
+/*
+FUNCTION: 
+        > verifies that the recieved byte corresponds to an antenna code and sends 
+INPUTS:
+        > recieved uart character
 */
 
 #endif

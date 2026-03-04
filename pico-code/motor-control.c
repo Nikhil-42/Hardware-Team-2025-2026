@@ -12,12 +12,14 @@
 #include "include/keyboard.h"
 #include "include/uart.h"
 #include "include/odom.h"
+#include "include/nec_protocol.h"
 
 #define SAMPLING_INTERVAL_US 2000 
+#define WATCHDOG_TIMEOUT_US 100000
 
-volatile bool sampling_flag = false; 
-bool first_packet_arrived = false;
-
+absolute_time_t last_cmd_time; 
+volatile bool sampling_flag = false;
+bool okay_to_send= false;
 float motor_rpm[WHEEL_COUNT] = {0}; 
 
 /*
@@ -69,10 +71,13 @@ int main()
         //running_average_init_all(ma_filt, WHEEL_COUNT);
         //float ma_filt_out[WHEEL_COUNT] = {0};
 
+        pwm38k_init();
+
         // initialize pose
         pose_t pose = {0, 0, 0, 0};
         
         add_alarm_in_us(SAMPLING_INTERVAL_US, sampling_callback, NULL, false);
+
         while(true)
         {
                 // continually read from UART and update expected expected motor speed setpoints if full packet is recieved
@@ -80,13 +85,38 @@ int main()
                 {
                         robo_v = cmd_vel;
                         cmd_ready = false;
-                        first_packet_arrived = true; 
+                        okay_to_send = true; 
 
                         // indicate packet receipt by toggling onboard LED
                         led_state = !led_state;
                         gpio_put(PICO_DEFAULT_LED_PIN, led_state);
+
+                        // reset the watchdog if new packet arrives 
+                        last_cmd_time = get_absolute_time();
                 }
-                //check_keyboard_stroke(&robo_v);
+
+                if(ant_code_ready)
+                {
+                        ant_code_ready = false; 
+                        //if(check_rx_antenna_code(rx_ant_code))
+                        {
+                                uint32_t nec_data = nec_encode(EARTH_ADDR, rx_ant_code);
+                                printf("DATA: %" PRIu32, nec_data);
+                                nec_send(nec_data);
+                        }
+                }
+
+                //if there hasnt been a new packet during a WATCHDOG_TIMEOUT period prevent pico from sending more and turn off motors 
+                if(absolute_time_diff_us(last_cmd_time, get_absolute_time()) > WATCHDOG_TIMEOUT_US)
+                {
+                        okay_to_send = false; 
+                        robo_v = (robot_velocities_t){0.0, 0.0, 0.0};
+                        for(int i = 0; i < WHEEL_COUNT; i++)
+                        {
+                                pid_outputs[i] = 0.0;
+                        }
+                        set_motor_pwm_channels(pid_outputs);
+                }
 
                 if(sampling_flag)
                 {
@@ -115,12 +145,10 @@ int main()
                         solve_mecanum_fk(&cmd_vel_send, motor_rpm_per_sample);
 
                         // only send speed packets if we have recieved cmd_vel from Pi
-                        if (first_packet_arrived)
+                        if (okay_to_send)
                         {
                                 send_speed_packet(&cmd_vel_send, &pose);
                         }
-
-
                 }
         }
 }

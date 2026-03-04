@@ -20,7 +20,7 @@ extern volatile int8_t direction[WHEEL_COUNT];
 
 #define GEAR_RATIO 18.75f
 #define COUNTS_PER_REVOULTION 1200.0f // counting level changes on both channels 
-#define WATCHDOG_TIMEOUT_US 100000 // us (100 ms)
+#define WATCHDOG_TIMEOUT_US 100000
 
 // ---------------------------------- FUNCTION PROTOTYPES ---------------------------------------------
 /*
