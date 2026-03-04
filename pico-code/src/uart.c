@@ -21,17 +21,32 @@ typedef enum {
     READING_9 = 9,
     READING_10 = 10,
     READING_11 = 11,
-    COMMIT = 12,
-    COMMIT_VERIFY = 13,
+    CHECKSUM_VERIFY = 12,
+    COMMIT = 13,
+    COMMIT_VERIFY = 14,
     SCANNING = 255,
     SCANNING_VERIFY = 254,
 } rx_state_t;
 
 rx_state_t rx_state = SCANNING;
+rx_state_t rx_ant_state = SCANNING;
+uint8_t rx_ant_code = 0x00;
 uint8_t rx_buffer[12];
+const uint32_t RX_BUF_LENGTH = sizeof(rx_buffer)/sizeof(rx_buffer[0]);
 
 bool cmd_ready = false;
+bool ant_code_ready = false; 
 robot_velocities_t cmd_vel = {0.0f, 0.0f, 0.0f};
+
+uint8_t xor_checksum(uint8_t* data, const uint32_t len)
+{
+        uint8_t checksum = 0;
+        for(int i = 0; i < len; i++)
+        {
+                checksum ^= data[i];
+        }
+        return checksum; 
+}
 
 void handle_received_byte(uint8_t rx_c) {
         switch (rx_state) {
@@ -53,6 +68,16 @@ void handle_received_byte(uint8_t rx_c) {
                         rx_buffer[rx_state] = rx_c;
                         rx_state++;
                         break;
+                case CHECKSUM_VERIFY:
+                        if(rx_c == xor_checksum(rx_buffer, RX_BUF_LENGTH))
+                        {
+                                rx_state++;
+                        }
+                        else
+                        {
+                                rx_state = SCANNING;
+                        }
+                        break;
                 case COMMIT:
                         if (rx_c == SPEED_END_BYTE_L) {         
                                 rx_state = COMMIT_VERIFY;
@@ -73,6 +98,40 @@ void handle_received_byte(uint8_t rx_c) {
                 default:
                         rx_state = SCANNING;
                         break;
+        }
+        switch(rx_ant_state)
+        {
+                case SCANNING:
+                        if(rx_c == ANTENNA_START_BYTE_H) {
+                                rx_ant_state = SCANNING_VERIFY;
+                        }
+                        break;
+                case SCANNING_VERIFY:
+                        if(rx_c == ANTENNA_START_BYTE_L) {
+                                rx_ant_state = READING_0;
+                        } else {
+                                rx_ant_state = SCANNING;
+                        }
+                        break;
+                case READING_0:
+                        rx_ant_code = rx_c; 
+                        rx_ant_state = COMMIT;
+                        break;
+                case COMMIT:
+                        if(rx_c == ANTENNA_END_BYTE_H) {
+                                rx_ant_state = COMMIT_VERIFY;
+                        } else {
+                                rx_ant_state = SCANNING;
+                        }
+                        break;
+                case COMMIT_VERIFY:
+                        if(rx_c == ANTENNA_END_BYTE_L) {
+                                ant_code_ready = true;
+                        } else {
+                                rx_ant_state = SCANNING; 
+                        }
+                        break; 
+
         }
 }
 
@@ -152,9 +211,15 @@ void send_speed_packet(robot_velocities_t* robo_v, pose_t* pose)
         buf[4] = pose->y;
         buf[5] = pose->theta;  
 
+        uint8_t data[2 * 3 * 4];
+        const uint32_t DATA_LEN = sizeof(data)/sizeof(data[0]);
+        memcpy(&data, &buf, DATA_LEN);
+        uint8_t checksum = xor_checksum(data, DATA_LEN);
+
         // add start and stop sync bytes to packet
         packet[0] = SPEED_START_BYTE_H;
         packet[1] = SPEED_START_BYTE_L;
+        packet[BYTES_IN_SENT_PACKET - 3] = checksum; 
         packet[BYTES_IN_SENT_PACKET - 2] = SPEED_END_BYTE_H;
         packet[BYTES_IN_SENT_PACKET - 1] = SPEED_END_BYTE_L;
 
@@ -172,6 +237,14 @@ void send_speed_packet(robot_velocities_t* robo_v, pose_t* pose)
                 packet[4*i + 5] = packet_lsb; 
                 //printf("%d, %d, %d, %d\n", packet_msb, packet_byte2, packet_byte1, packet_lsb);
         }
+        
+        /*
+        for(int i = 0; i < BYTES_IN_SENT_PACKET; i++)
+        {
+                printf("%x\t", packet[i]);
+        }
+        printf("\n");
+        */
 
         uart_write_blocking(uart0, packet, BYTES_IN_SENT_PACKET);
 }

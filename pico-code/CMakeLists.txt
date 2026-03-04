@@ -34,7 +34,7 @@ project(motor-control C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(motor-control motor-control.c src/encoder.c src/motor.c src/pinout.c src/pid.c src/ma.c src/uart.c src/nec_protocol.c src/kinematics.c src/keyboard.c src/odom.c)
+add_executable(motor-control motor-control.c src/encoder.c src/motor.c src/pinout.c src/pid.c src/ma.c src/uart.c src/nec_protocol.c src/kinematics.c src/keyboard.c src/odom.c src/nec_protocol.c)
 
 pico_set_program_name(motor-control "motor-control")
 pico_set_program_version(motor-control "0.1")
@@ -51,6 +51,7 @@ target_link_libraries(motor-control
         hardware_pwm
         hardware_clocks
         hardware_uart
+        hardware_timer
         )
 
 # Add the standard include files to the build

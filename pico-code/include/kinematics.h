@@ -6,7 +6,7 @@
 // M1 fl, M2 fr, M3 rl, M4 rr
 
 // measurements in meters
-#define R 0.0275f // [m] radius of wheel
+#define R 0.03f // [m] radius of wheel
 #define Lx 0.10795f // [m] half distance between front wheels
 #define Ly 0.10795f // [m] half distance between front and rear wheel
 

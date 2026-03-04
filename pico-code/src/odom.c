@@ -7,13 +7,14 @@
 
 #define WHEEL_CIRCUMFERENCE (2.0f * PI * R)
 #define DS_CONV_FACTOR (WHEEL_CIRCUMFERENCE/COUNTS_PER_REVOULTION)
+#define SLIPPAGE_FACTOR (75.0f/80.0f) //experimentally determined from nonideal drive (drove 80cm and it went 75cm in y)
 float ds[WHEEL_COUNT]; 
 
 int count = 0;
 
 void odom_update(pose_t* pose)
 {
-        absolute_time_t current_time = get_absolute_time();
+        absolute_time_t current_time = get_absolute_time();     
         int64_t dt = absolute_time_diff_us(pose->prev_time, current_time);
 
         for(int i = 0; i < WHEEL_COUNT; i++)
@@ -26,7 +27,7 @@ void odom_update(pose_t* pose)
         float dx = ( ds[FL] + ds[FR] + ds[RL] + ds[RR]) / 4.0f;
         float dy = (-ds[FL] + ds[FR] + ds[RL] - ds[RR]) / 4.0f;
         float dtheta = (-ds[FL] + ds[FR] - ds[RL] + ds[RR]) / (4.0f * (Lx + Ly));
-
+ 
         // rotate   
         pose->x += dx * (float)cos((double)pose->theta) - dy * (float)sin((double)pose->theta);
         pose->y += dy * (float)cos((double)pose->theta) + dx * (float)sin((double)pose->theta);

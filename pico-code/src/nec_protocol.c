@@ -3,6 +3,10 @@
 #include "hardware/timer.h"
 #include "hardware/clocks.h"
 #include "include/nec_protocol.h"
+#include <stdio.h>
+
+uint8_t antenna_codes[4] = {0x00, 0x30, 0x50, 0x60};
+uint8_t color_codes[4] = {0x09, 0x0A, 0x0C, 0x0F};
 
 static uint carrier_level; // tracks the duty cycle of the carrier waveform 
 int bit_index; // tracks the number of bits from the transmission frame that have been scheduled 
@@ -129,11 +133,10 @@ void disable_carrier()
 {
         // disable PWM and pull low using GPIO (testing occasionally showed that signal was high during spaces; should be low when disabled)
         uint slice = pwm_gpio_to_slice_num(IR_TRANS_PIN);
-        pwm_set_enabled(slice, false);
-        gpio_set_function(IR_TRANS_PIN, GPIO_FUNC_SIO); 
-        gpio_put(IR_TRANS_PIN, 0); 
-        carrier_enabled = false; 
-     
+        uint channel = pwm_gpio_to_channel(IR_TRANS_PIN);
+        
+        pwm_set_chan_level(slice, channel, 0);
+        carrier_enabled = false;      
 }
 
 uint32_t nec_encode(uint8_t address, uint8_t command) 
@@ -153,4 +156,25 @@ void nec_send(uint32_t data)
         // start series of timer schedulings with leading pulse 
         enable_carrier(); 
         add_alarm_in_us(NEC_LEAD_PULSE_US, nec_timer_callback, NULL, false);
+}
+
+bool check_rx_antenna_code(uint8_t rx_c)
+{
+        bool valid_antenna = false; 
+        bool valid_color = false; 
+        for(int i = 0; i < 4; i++)
+        {
+                // check if valid antenna code
+                if(((rx_c >> 4) & 0x0F) == antenna_codes[i])
+                {
+                        valid_antenna = true; 
+                        break;
+                }
+                if((rx_c & 0x0F) == color_codes[i])
+                {
+                        valid_color = true; 
+                        break; 
+                }
+        }
+        return (valid_antenna && valid_color);
 }
