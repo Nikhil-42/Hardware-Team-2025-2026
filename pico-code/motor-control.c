@@ -17,10 +17,13 @@
 #define SAMPLING_INTERVAL_US 2000 
 #define WATCHDOG_TIMEOUT_US 100000
 
-absolute_time_t last_cmd_time; 
+absolute_time_t last_cmd_time;
+absolute_time_t last_ant_time;
 volatile bool sampling_flag = false;
 bool okay_to_send= false;
 float motor_rpm[WHEEL_COUNT] = {0}; 
+
+uint32_t ant_nec_data[4] = {255, 255, 255, 255};
 
 /*
         set sampling flag to be used as main interval timer
@@ -100,10 +103,34 @@ int main()
                         ant_code_ready = false; 
                         //if(check_rx_antenna_code(rx_ant_code))
                         {
-                                uint32_t nec_data = nec_encode(EARTH_ADDR, rx_ant_code);
+                                uint8_t local_rx_ant_code = rx_ant_code;
+                                uint32_t nec_data = nec_encode(EARTH_ADDR, local_rx_ant_code);
                                 printf("DATA: %" PRIu32, nec_data);
-                                nec_send(nec_data);
+
+                                uint32_t i = 0;
+                                while (i < 4 && (local_rx_ant_code >> 4 && 0xF) != antenna_codes[i])
+                                {
+                                        i++;
+                                }
+
+                                if (i < 4)
+                                {
+                                        ant_nec_data[0] = nec_data;
+                                }
                         }
+                }
+
+                if(absolute_time_diff_us(last_ant_time, get_absolute_time()) > 500000)
+                {
+                        for (int i = 0; i < 4; i++)
+                        {
+                                if (ant_nec_data[i] != 255)
+                                {
+                                        nec_send(0x000F);
+                                }
+                        }
+                        last_ant_time = get_absolute_time();
+                        nec_send(0x000F);
                 }
 
                 //if there hasnt been a new packet during a WATCHDOG_TIMEOUT period prevent pico from sending more and turn off motors 
