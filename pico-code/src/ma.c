@@ -1,4 +1,4 @@
-#include "include/ma.h"
+#include "ma.h"
 #include <stdio.h>
 
 void running_average_init(runningAverageFilter *filt)

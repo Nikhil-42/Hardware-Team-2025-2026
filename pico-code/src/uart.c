@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <memory.h>
-#include "include/kinematics.h"
-#include "include/odom.h"
-#include "include/uart.h"
+#include "kinematics.h"
+#include "odom.h"
+#include "uart.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
+#include "nec_transmit.h"
 
 typedef enum {
     READING_0 = 0,
@@ -126,12 +127,36 @@ void handle_received_byte(uint8_t rx_c) {
                         break;
                 case COMMIT_VERIFY:
                         if(rx_c == ANTENNA_END_BYTE_L) {
-                                ant_code_ready = true;
-                        } else {
-                                rx_ant_state = SCANNING; 
+                                ssize_t i = -1;
+                                switch (rx_ant_code & 0xF0) {
+                                        case ANTENNA_1_gc:
+                                                i = 0;
+                                                printf("Received ANTENNA_1_gc code: ");
+                                                break;
+                                        case ANTENNA_2_gc:
+                                                i = 1;
+                                                printf("Received ANTENNA_1_gc code: ");
+                                                break;
+                                        case ANTENNA_3_gc:
+                                                i = 2;
+                                                printf("Received ANTENNA_1_gc code: ");
+                                                break;
+                                        case ANTENNA_4_gc:
+                                                i = 3;
+                                                printf("Received ANTENNA_1_gc code: ");
+                                                break;
+                                        default:
+                                                printf("Received Invalid Antenna code: ");
+                                                break;
+                                }
+                                if (i != -1) {
+                                        ant_nec_data[i] = rx_ant_code;
+                                }
+                                printf("0x%02x\n", rx_ant_code);
                         }
-                        break; 
 
+                        rx_ant_state = SCANNING; 
+                        break; 
         }
 }
 

@@ -1,8 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
-#include "include/kinematics.h"
-#include "include/odom.h"
+#include "kinematics.h"
+#include "odom.h"
 
 #define UART0_BAUD 115200
 #define UART0_DATA 8

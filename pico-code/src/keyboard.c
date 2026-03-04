@@ -4,8 +4,8 @@
 #include "pico/error.h"
 #include "pico/stdio.h"
 #include "pico/stdlib.h"
-#include "include/kinematics.h"
-#include "include/keyboard.h"
+#include "kinematics.h"
+#include "keyboard.h"
 
 // for direct conversion to mecanum wheel angular velocities
 /*

@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
-#include "include/motor.h"
-#include "include/pinout.h"
+#include "motor.h"
+#include "pinout.h"
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"

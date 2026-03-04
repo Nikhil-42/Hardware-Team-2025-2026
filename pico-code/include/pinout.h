@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 
+// transciever pins whenever that code is migrated here
+#define IR_TRANSMIT_PIN 10
+
 // ----------------------------------- MOTOR PINMAPPING -----------------------------------------------
 #define WHEEL_COUNT 4
 #define MAX_GPIO 29 // 0 - 28

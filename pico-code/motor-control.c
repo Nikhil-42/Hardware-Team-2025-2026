@@ -4,26 +4,28 @@
 #include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
-#include "include/encoder.h"
-#include "include/motor.h"
-#include "include/pid.h"
-#include "include/ma.h"
-#include "include/kinematics.h"
-#include "include/keyboard.h"
-#include "include/uart.h"
-#include "include/odom.h"
-#include "include/nec_protocol.h"
+#include "encoder.h"
+#include "motor.h"
+#include "pid.h"
+#include "ma.h"
+#include "nec_transmit.h"
+#include "kinematics.h"
+#include "keyboard.h"
+#include "uart.h"
+#include "odom.h"
+#include "pinout.h"
 
 #define SAMPLING_INTERVAL_US 2000 
 #define WATCHDOG_TIMEOUT_US 100000
 
 absolute_time_t last_cmd_time;
 absolute_time_t last_ant_time;
+size_t ant_i = 0;
+
 volatile bool sampling_flag = false;
-bool okay_to_send= false;
+bool okay_to_send = false;
 float motor_rpm[WHEEL_COUNT] = {0}; 
 
-uint32_t ant_nec_data[4] = {255, 255, 255, 255};
 
 /*
         set sampling flag to be used as main interval timer
@@ -42,6 +44,14 @@ int main()
 
         // initialize UART 
         uart0_init();
+
+        PIO pio = pio0;
+        int tx_sm = nec_tx_init(pio, IR_TRANSMIT_PIN);
+
+        if (tx_sm < 0) {
+                printf("Failed to initialize NEC transmitter\n");
+                return 1;
+        }
 
         // initialize all motor pwm channels 
         motor_pwm_init();
@@ -74,7 +84,7 @@ int main()
         //running_average_init_all(ma_filt, WHEEL_COUNT);
         //float ma_filt_out[WHEEL_COUNT] = {0};
 
-        pwm38k_init();
+        //pwm38k_init();
 
         // initialize pose
         pose_t pose = {0, 0, 0, 0};
@@ -98,39 +108,17 @@ int main()
                         last_cmd_time = get_absolute_time();
                 }
 
-                if(ant_code_ready)
-                {
-                        ant_code_ready = false; 
-                        //if(check_rx_antenna_code(rx_ant_code))
-                        {
-                                uint8_t local_rx_ant_code = rx_ant_code;
-                                uint32_t nec_data = nec_encode(EARTH_ADDR, local_rx_ant_code);
-                                printf("DATA: %" PRIu32, nec_data);
-
-                                uint32_t i = 0;
-                                while (i < 4 && (local_rx_ant_code >> 4 && 0xF) != antenna_codes[i])
-                                {
-                                        i++;
-                                }
-
-                                if (i < 4)
-                                {
-                                        ant_nec_data[0] = nec_data;
-                                }
-                        }
-                }
-
                 if(absolute_time_diff_us(last_ant_time, get_absolute_time()) > 500000)
                 {
-                        for (int i = 0; i < 4; i++)
+                        if (ant_nec_data[ant_i] != 255)
                         {
-                                if (ant_nec_data[i] != 255)
-                                {
-                                        nec_send(0x000F);
-                                }
+
+                                uint32_t frame = nec_encode_frame(EARTH_ADDR, ant_nec_data[ant_i]);
+                                printf("SENDING NEC FRAME: 0x%02x\n", frame);
+                                nec_send_frame(pio, tx_sm, frame);
                         }
                         last_ant_time = get_absolute_time();
-                        nec_send(0x000F);
+                        ant_i = (ant_i + 1) % 4;
                 }
 
                 //if there hasnt been a new packet during a WATCHDOG_TIMEOUT period prevent pico from sending more and turn off motors 

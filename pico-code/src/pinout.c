@@ -1,4 +1,4 @@
-#include "include/pinout.h"
+#include "pinout.h"
 
 int8_t inverter[WHEEL_COUNT] = {-1, 1, -1, 1};
 

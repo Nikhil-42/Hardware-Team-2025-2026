@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <inttypes.h>
-#include "include/encoder.h"
-#include "include/pinout.h"
+#include "encoder.h"
+#include "pinout.h"
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
   

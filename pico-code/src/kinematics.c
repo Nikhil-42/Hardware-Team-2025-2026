@@ -1,5 +1,5 @@
-#include "include/kinematics.h"
-#include "include/motor.h"
+#include "kinematics.h"
+#include "motor.h"
 #include <stdint.h>
 #include <stdio.h>
 

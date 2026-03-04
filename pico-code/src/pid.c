@@ -1,5 +1,5 @@
-#include "include/pid.h"
-#include "include/pinout.h"
+#include "pid.h"
+#include "pinout.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -94,7 +94,7 @@ float pid_controller_update(PIDController *pid, float setpoint, float process_va
         //printf("p: %f\n", p);
         //printf("i: %f\n", i);
         //printf("d: %f\n", d);
-        //printf("PID output %f\n", pid->output);
+        // printf("PID output %f\n", pid->output);
         pid->previous_error = error;
         return pid->output;
 }
@@ -106,6 +106,6 @@ void pid_controller_update_all(PIDController *all_pids, float *setpoints, float 
                 pid_outputs[i] = pid_controller_update(&all_pids[i], setpoints[i], process_variables[i]); 
                 
         }
-        printf("%f, %f, %f\n", pid_outputs[0], setpoints[0], process_variables[0]);
+        // printf("PID: %f, %f, %fd\n", pid_outputs[0], setpoints[0], process_variables[0]);
 }
 

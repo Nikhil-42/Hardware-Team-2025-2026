@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <math.h>
-#include "include/odom.h"
-#include "include/encoder.h"
-#include "include/motor.h"
-#include "include/kinematics.h"
+#include "odom.h"
+#include "encoder.h"
+#include "motor.h"
+#include "kinematics.h"
 
 #define WHEEL_CIRCUMFERENCE (2.0f * PI * R)
 #define DS_CONV_FACTOR (WHEEL_CIRCUMFERENCE/COUNTS_PER_REVOULTION)
