@@ -5,9 +5,11 @@
 #include "behaviors/report_color_node.hpp"
 #include "behaviors/start_node.hpp"
 
+using namespace BT;
+
 extern "C" void BT_RegisterRosNodeFromPlugin(
-  BT::BehaviorTreeFactory& factory,
-  const BT::RosNodeParams& params)
+  BehaviorTreeFactory& factory,
+  const RosNodeParams& params)
 {
   // This is the part that depends on your BT ROS2 wrapper version.
   // In many setups, this works:

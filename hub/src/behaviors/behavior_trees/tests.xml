@@ -1,0 +1,29 @@
+<root BTCPP_format="4">
+
+  <BehaviorTree ID="ReportColorTest">
+    <Repeat num_cycles="-1">
+      <Sequence>
+        <ReportColor service_name="report_ir" antenna="1" color="82"/>
+        <ReportColor service_name="report_ir" antenna="2" color="82"/>
+        <ReportColor service_name="report_ir" antenna="3" color="82"/>
+        <ReportColor service_name="report_ir" antenna="4" color="82"/>
+
+        <ReportColor service_name="report_lcd" antenna="1" color="82"/>
+        <ReportColor service_name="report_lcd" antenna="2" color="82"/>
+        <ReportColor service_name="report_lcd" antenna="3" color="82"/>
+        <ReportColor service_name="report_lcd" antenna="4" color="82"/>
+      </Sequence>
+    </Repeat>
+  </BehaviorTree>
+
+  <BehaviorTree ID="FingerTest">
+    <Sequence>
+      <Finger idx="7" action="click"/>
+      <Finger idx="3" action="click"/>
+      <Finger idx="7" action="click"/>
+      <Finger idx="3" action="click"/>
+      <Finger idx="8" action="click"/>
+      <Finger idx="-1" action="click"/>
+    </Sequence>
+  </BehaviorTree>
+</root>

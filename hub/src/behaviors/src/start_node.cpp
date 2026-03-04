@@ -1,5 +1,7 @@
 #include "behaviors/start_node.hpp"
 
+using namespace BT;
+
 bool StartNode::setGoal(RosActionNode::Goal& goal)
 {
   return true;

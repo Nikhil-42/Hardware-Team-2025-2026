@@ -1,6 +1,8 @@
 #include "behaviors/report_color_node.hpp"
 #include <string>
 
+using namespace BT;
+
 bool ReportColorNode::setRequest(Request::SharedPtr& request)
 {
   getInput("antenna", request->antenna);
@@ -9,25 +11,25 @@ bool ReportColorNode::setRequest(Request::SharedPtr& request)
   return true;
 }
 
-BT::NodeStatus ReportColorNode::onResponseReceived(const Response::SharedPtr& response)
+NodeStatus ReportColorNode::onResponseReceived(const Response::SharedPtr& response)
 {
   std::cout << "onResponseReceived " << std::endl;
   if(response->success)
   {
     RCLCPP_INFO(logger(), "ReportColor service succeeded.");
-    return BT::NodeStatus::SUCCESS;
+    return NodeStatus::SUCCESS;
   }
   else
   {
     RCLCPP_INFO(logger(), "ReportColor service failed.");
-    return BT::NodeStatus::FAILURE;
+    return NodeStatus::FAILURE;
   }
 }
 
-BT::NodeStatus ReportColorNode::onFailure(BT::ServiceNodeErrorCode error)
+NodeStatus ReportColorNode::onFailure(ServiceNodeErrorCode error)
 {
   RCLCPP_ERROR(logger(), "%s: onFailure with error: %s (%d)",
                name().c_str(), toStr(error), static_cast<int>(error));
-  return BT::NodeStatus::FAILURE;
+  return NodeStatus::FAILURE;
 }
 

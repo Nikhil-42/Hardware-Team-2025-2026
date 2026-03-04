@@ -33,17 +33,6 @@
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="FingerTest">
-    <Sequence>
-      <Finger idx="7" action="click"/>
-      <Finger idx="3" action="click"/>
-      <Finger idx="7" action="click"/>
-      <Finger idx="3" action="click"/>
-      <Finger idx="8" action="click"/>
-      <Finger idx="-1" action="click"/>
-    </Sequence>
-  </BehaviorTree>
-
   <BehaviorTree ID="WaitForStart">
     <Parallel success_count="1" failure_count="-1">
       <Start action_name="/start_button"/>

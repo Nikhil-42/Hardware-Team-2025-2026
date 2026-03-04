@@ -17,7 +17,7 @@ find_package(nav_msgs REQUIRED)
 find_package(hub_interfaces REQUIRED)
 
 add_executable(chassis src/chassis.cpp)
-ament_target_dependencies(chassis rclcpp std_msgs nav_msgs)
+ament_target_dependencies(chassis rclcpp std_msgs nav_msgs hub_interfaces)
 target_include_directories(chassis PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)

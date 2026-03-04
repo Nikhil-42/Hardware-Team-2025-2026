@@ -11,7 +11,7 @@ class DriveToPoseNode : public RosActionNode<DriveToPose>
 public:
     DriveToPoseNode(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<DriveToPose>(name, conf, params) {}
     
-    static BT::PortsList providedPorts()
+    static PortsList providedPorts()
     {
         return providedBasicPorts({
             InputPort<std::string>("server_name", "/drive_to_pose"),
@@ -25,6 +25,6 @@ public:
 
     bool setGoal(Goal& goal) override;
     void onHalt() override;
-    BT::NodeStatus onResultReceived(const WrappedResult& wr) override;
-    virtual BT::NodeStatus onFailure(ActionNodeErrorCode error) override;
+    NodeStatus onResultReceived(const WrappedResult& wr) override;
+    virtual NodeStatus onFailure(ActionNodeErrorCode error) override;
 };

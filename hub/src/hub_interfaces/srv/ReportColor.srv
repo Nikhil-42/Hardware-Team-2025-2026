@@ -1,4 +1,4 @@
-int64 antenna
+int8 antenna
 uint8 color
 ---
 bool success

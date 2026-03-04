@@ -13,6 +13,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "nav_msgs/msg/odometry.hpp"
+#include "hub_interfaces/srv/report_color.hpp"
 
 using namespace std::chrono_literals;
 
@@ -79,13 +80,13 @@ class Chassis : public rclcpp::Node
       this->declare_parameter("device", "/dev/ttyAMA0");
       std::string device = this->get_parameter("device").as_string();
 
-      pose_cov_ = get_pose_covariance();
-      twist_cov_ = get_twist_covariance();
+      pose_cov = get_pose_covariance();
+      twist_cov = get_twist_covariance();
 
       RCLCPP_INFO(this->get_logger(), "Attempting to open serial port: %s", device.c_str());
-      this->serial_port_ = open(device.c_str(), O_RDWR | O_NOCTTY);
+      this->serial_port = open(device.c_str(), O_RDWR | O_NOCTTY);
 
-      if (this->serial_port_ < 0)
+      if (this->serial_port < 0)
       {
         RCLCPP_ERROR(this->get_logger(), "Failed to open serial port: %s", strerror(errno));
       }
@@ -97,7 +98,7 @@ class Chassis : public rclcpp::Node
       struct termios tty;
       struct termios old_tty;
 
-      if (tcgetattr(this->serial_port_, &old_tty) != 0)
+      if (tcgetattr(this->serial_port, &old_tty) != 0)
       {
         RCLCPP_ERROR(this->get_logger(), "Error from tcgetattr: %s", strerror(errno));
       }
@@ -108,14 +109,74 @@ class Chassis : public rclcpp::Node
       cfsetispeed(&tty, B115200);
       cfmakeraw(&tty);
 
-      if (tcsetattr(this->serial_port_, TCSANOW, &tty) != 0) {
+      if (tcsetattr(this->serial_port, TCSANOW, &tty) != 0) {
         RCLCPP_ERROR(this->get_logger(), "Error from tcgetattr: %s", strerror(errno));
       };
+
+      this->report_color_srv = this->create_service<hub_interfaces::srv::ReportColor>(
+        "report_ir", [this](hub_interfaces::srv::ReportColor::Request::SharedPtr request, hub_interfaces::srv::ReportColor::Response::SharedPtr response) {
+            RCLCPP_INFO(this->get_logger(), "Received color report: %d", request->color);
+
+            char anntena_code;
+            char color_code;
+            switch (request->antenna) {
+              case 1: anntena_code = 0x00; break;
+              case 2: anntena_code = 0x30; break;
+              case 3: anntena_code = 0x50; break;
+              case 4: anntena_code = 0x60; break;
+              default:
+                RCLCPP_ERROR(this->get_logger(), "Invalid antenna number: %d", request->antenna);
+                response->success = false;
+                return;
+            }
+
+            switch (request->color) {
+              case 'R': case 'r':
+                color_code = 0x09; break;
+              case 'G': case 'g': 
+                color_code = 0x0A; break;
+              case 'B': case 'b': 
+                color_code = 0x0C; break;
+              case 'P': case 'p': 
+                color_code = 0x0F; break;
+              default:
+                RCLCPP_ERROR(this->get_logger(), "Invalid color: %c", request->color);
+                response->success = false;
+                return;
+            }
+            
+            // Serialize and send the IR command over UART
+            char buffer[2 + 1 + 2];
+
+            buffer[0] = 0x11;
+            buffer[1] = 0x11;
+            buffer[2] = anntena_code | color_code;
+            buffer[4] = 0xDD;
+            buffer[5] = 0xDD;
+
+
+            ssize_t n = -1;
+            {
+              std::scoped_lock lock(this->port_lock);
+              n = write(this->serial_port, buffer, sizeof(buffer));
+            }
+
+            if (n < 0)
+            {
+              RCLCPP_ERROR(this->get_logger(), "Error writing to serial port: %s", strerror(errno));
+              response->success = false;
+            } else {
+              response->success = true;
+              // RCLCPP_INFO(this->get_logger(), "Wrote %zd bytes to serial port", n);
+            }
+          }
+      );
 
       this->cmd_vel_sub = this->create_subscription<geometry_msgs::msg::Twist>(
         "cmd_vel", 10,
         [this](const geometry_msgs::msg::Twist::SharedPtr msg) {
-          // Serialize and send the command over UART
+
+          // Serialize and send the drive command over UART
           char buffer[2 + 4 * 3 + 1 + 2];
           buffer[0] = 0xFF;
           buffer[1] = 0xFF;
@@ -129,7 +190,12 @@ class Chassis : public rclcpp::Node
           buffer[15] = 0xEE;
           buffer[16] = 0xEE;
 
-          ssize_t n = write(this->serial_port_, buffer, sizeof(buffer));
+          ssize_t n = -1;
+          {
+            std::scoped_lock lock(this->port_lock);
+            n = write(this->serial_port, buffer, sizeof(buffer));
+          }
+
           if (n < 0)
           {
             RCLCPP_ERROR(this->get_logger(), "Error writing to serial port: %s", strerror(errno));
@@ -139,7 +205,8 @@ class Chassis : public rclcpp::Node
         });
 
       this->odom_pub = this->create_publisher<nav_msgs::msg::Odometry>("odometry", 10);
-      this->read_thread_ = std::thread([this]() {
+
+      this->read_thread = std::thread([this]() {
         while (rclcpp::ok())
         {
           RCLCPP_INFO(this->get_logger(), "Scanning for start word (0xFFFF)...");
@@ -148,7 +215,7 @@ class Chassis : public rclcpp::Node
           while (rclcpp::ok() && count < 2) {
             // Read byte
             uint8_t c;
-            int n = read(this->serial_port_, &c, 1);
+            int n = read(this->serial_port, &c, 1);
             if (n < 0) {
               RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
             } else if (n > 0) {
@@ -169,7 +236,7 @@ class Chassis : public rclcpp::Node
             char buf[3*4 + 3*4 + 1 + 2];
             const uint32_t LEN = sizeof(buf) / sizeof(buf[0]);
 
-            ssize_t n = read_blocking(this->serial_port_, buf, sizeof(buf));
+            ssize_t n = read_blocking(this->serial_port, buf, sizeof(buf));
             if (n < 0) {
                 RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
                 break;
@@ -225,17 +292,17 @@ class Chassis : public rclcpp::Node
 
             msg.pose.pose.orientation.z = sinf32(odom.posetheta / 2.0f);
             msg.pose.pose.orientation.w = cosf32(odom.posetheta / 2.0f);
-            msg.pose.covariance = pose_cov_;
+            msg.pose.covariance = pose_cov;
 
             msg.twist.twist.linear.x = odom.velx;
             msg.twist.twist.linear.y = odom.vely;
             msg.twist.twist.angular.z = odom.veltheta;
-            msg.twist.covariance = twist_cov_;
+            msg.twist.covariance = twist_cov;
 
             this->odom_pub->publish(msg);
 
             uint16_t start_word;
-            n = read_blocking(this->serial_port_, &start_word, 2);
+            n = read_blocking(this->serial_port, &start_word, 2);
             if (n < 0) {
               RCLCPP_ERROR(this->get_logger(), "Error reading from serial port: %s", strerror(errno));
               break;
@@ -250,15 +317,18 @@ class Chassis : public rclcpp::Node
           std::this_thread::sleep_for(100ms); // Adjust sleep duration as needed
         }
       });
-      this->read_thread_.detach();
+      this->read_thread.detach();
     }
   private:
-    int serial_port_;
+    int serial_port;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub;
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub;
-    std::thread read_thread_;
-	std::array<double, 36> pose_cov_;
-	std::array<double, 36> twist_cov_;
+    std::thread read_thread;
+    std::mutex port_lock;
+    rclcpp::Service<hub_interfaces::srv::ReportColor>::SharedPtr report_color_srv;
+
+    std::array<double, 36> pose_cov;
+    std::array<double, 36> twist_cov;
 };
 
 int main(int argc, char ** argv)

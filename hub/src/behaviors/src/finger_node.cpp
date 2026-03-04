@@ -1,6 +1,8 @@
 #include "behaviors/finger_node.hpp"
 #include <string>
 
+using namespace BT;
+
 bool FingerNode::setRequest(Request::SharedPtr& request)
 {
   getInput("idx", request->idx);
@@ -8,25 +10,25 @@ bool FingerNode::setRequest(Request::SharedPtr& request)
   return true;
 }
 
-BT::NodeStatus FingerNode::onResponseReceived(const Response::SharedPtr& response)
+NodeStatus FingerNode::onResponseReceived(const Response::SharedPtr& response)
 {
   std::cout << "onResponseReceived " << std::endl;
   if(response->success)
   {
     RCLCPP_INFO(logger(), "Finger service succeeded.");
-    return BT::NodeStatus::SUCCESS;
+    return NodeStatus::SUCCESS;
   }
   else
   {
     RCLCPP_INFO(logger(), "Finger service failed.");
-    return BT::NodeStatus::FAILURE;
+    return NodeStatus::FAILURE;
   }
 }
 
-BT::NodeStatus FingerNode::onFailure(BT::ServiceNodeErrorCode error)
+NodeStatus FingerNode::onFailure(ServiceNodeErrorCode error)
 {
   RCLCPP_ERROR(logger(), "%s: onFailure with error: %s (%d)",
                name().c_str(), toStr(error), static_cast<int>(error));
-  return BT::NodeStatus::FAILURE;
+  return NodeStatus::FAILURE;
 }
 

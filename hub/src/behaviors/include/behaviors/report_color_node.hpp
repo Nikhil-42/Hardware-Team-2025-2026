@@ -3,6 +3,7 @@
 #include <behaviortree_ros2/bt_service_node.hpp>
 #include "hub_interfaces/srv/report_color.hpp"
 
+using namespace BT;
 using ReportColor = hub_interfaces::srv::ReportColor;
 
 class ReportColorNode : public RosServiceNode<ReportColor>
@@ -15,7 +16,7 @@ public:
 
   static PortsList providedPorts()
   {
-    return providedBasicPorts({ InputPort<std::string>("server_name", "/click"), InputPort<uint8_t>("antenna"), InputPort<uint8_t>("color") });
+    return providedBasicPorts({ InputPort<std::string>("server_name", "/report_ir"), InputPort<uint8_t>("antenna"), InputPort<uint8_t>("color") });
   }
 
   bool setRequest(Request::SharedPtr& request) override;

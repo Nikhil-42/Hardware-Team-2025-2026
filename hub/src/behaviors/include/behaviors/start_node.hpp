@@ -3,6 +3,7 @@
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "hub_interfaces/action/start.hpp"
 
+using namespace BT;
 using Start = hub_interfaces::action::Start;
 
 class StartNode : public RosActionNode<Start>
