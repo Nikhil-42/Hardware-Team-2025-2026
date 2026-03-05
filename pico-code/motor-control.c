@@ -16,6 +16,7 @@
 #include "pinout.h"
 
 #define SAMPLING_INTERVAL_US 2000 
+#define IR_INTERVAL_US 200000
 #define WATCHDOG_TIMEOUT_US 100000
 
 absolute_time_t last_cmd_time;
@@ -108,7 +109,7 @@ int main()
                         last_cmd_time = get_absolute_time();
                 }
 
-                if(absolute_time_diff_us(last_ant_time, get_absolute_time()) > 500000)
+                if(absolute_time_diff_us(last_ant_time, get_absolute_time()) > IR_INTERVAL_US)
                 {
                         if (ant_nec_data[ant_i] != 255)
                         {
