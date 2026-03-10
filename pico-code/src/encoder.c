@@ -88,8 +88,8 @@ void gpio_encoder_map_init()
         }
         for (int i = 0; i < MAX_GPIO; i++)
         {
-                printf("encoder map at gpio %d: %d\n", i, gpio_to_encoder_map[i]);
-                printf("gpio %d to motor ch: %d\n", i, gpio_to_motor_ch[i]);
+                // printf("encoder map at gpio %d: %d\n", i, gpio_to_encoder_map[i]);
+                // printf("gpio %d to motor ch: %d\n", i, gpio_to_motor_ch[i]);
         }
 }
 
@@ -119,9 +119,9 @@ void calculate_rpms(float* rpms)
 {
         // determine number of encoder counts since last sample on each channel 
         // note that FL and RL are inverted because of the wheel geoemetry (i.e., ccw rotation results in positive displacement)
-        encoder_counts_difference[FL] = -(cumulative_encoder_counts[FL] - previous_encoder_counts[FL]);
+        encoder_counts_difference[FL] = cumulative_encoder_counts[FL] - previous_encoder_counts[FL];
         encoder_counts_difference[FR] = cumulative_encoder_counts[FR] - previous_encoder_counts[FR];
-        encoder_counts_difference[RL] = -(cumulative_encoder_counts[RL] - previous_encoder_counts[RL]);
+        encoder_counts_difference[RL] = cumulative_encoder_counts[RL] - previous_encoder_counts[RL];
         encoder_counts_difference[RR] = cumulative_encoder_counts[RR] - previous_encoder_counts[RR];
 
         //printf("RPMs \t Encoder counts\n");
@@ -140,7 +140,7 @@ void calculate_rpms(float* rpms)
                 //rpms[i] =  (float)encoder_counts_difference[i] * 60.0f / (COUNTS_PER_REVOULTION * 2000e-6f);
                 if (tick_dt[i] != 0)
                 {
-                        rpms[i] = (float)direction[i] * (float)inverter[i] * 60.0f * 1000000.0f * 2 / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
+                        rpms[i] = (float)direction[i] * 60.0f * 1000000.0f * 2 / ((float)tick_dt[i] * COUNTS_PER_REVOULTION);
                 }
                 //printf("ticks per interval: %f", (float)tick_dt[i]);
                 //printf("%f\t", rpms[i]);

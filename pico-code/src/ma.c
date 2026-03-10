@@ -43,6 +43,6 @@ void running_average_update_all(runningAverageFilter *all_filts, float *new_samp
         for(int i = 0; i < N; i++)
         {
                 filtered_outputs[i] = running_average_update(&all_filts[i], new_samples[i]); 
-                printf("MA output for motor %d: %f\n", i + 1, filtered_outputs[i]);
+                //printf("MA output for motor %d: %f\n", i + 1, filtered_outputs[i]);
         }
 }

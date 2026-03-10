@@ -21,6 +21,3 @@ typedef struct MotorChannel
 
 // Stores the GPIO pins corresponding to each motor channel 
 extern const MotorChannel motorPinMap [WHEEL_COUNT];
-
-// transciever pins whenever that code is migrated here
-#define IR_TRANSCIEVER_PIN

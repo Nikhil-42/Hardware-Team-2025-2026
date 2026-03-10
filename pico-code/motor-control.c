@@ -50,7 +50,7 @@ int main()
         int tx_sm = nec_tx_init(pio, IR_TRANSMIT_PIN);
 
         if (tx_sm < 0) {
-                printf("Failed to initialize NEC transmitter\n");
+                //printf("Failed to initialize NEC transmitter\n");
                 return 1;
         }
 
@@ -115,7 +115,6 @@ int main()
                         {
 
                                 uint32_t frame = nec_encode_frame(EARTH_ADDR, ant_nec_data[ant_i]);
-                                printf("SENDING NEC FRAME: 0x%02x\n", frame);
                                 nec_send_frame(pio, tx_sm, frame);
                         }
                         last_ant_time = get_absolute_time();
@@ -150,9 +149,12 @@ int main()
                         // update running average filter outputs
                         //running_average_update_all(ma_filt, motor_rpm_per_sample, ma_filt_out, WHEEL_COUNT);
 
+                        // printf("RPM setpoints: FL: %f, FR: %f, RL: %f, RR: %f\n", rpm_setpoints[FL], rpm_setpoints[FR], rpm_setpoints[RL], rpm_setpoints[RR]);
+                        // printf("Measured RPMs: FL: %f, FR: %f, RL: %f, RR: %f\n", motor_rpm_per_sample[FL], motor_rpm_per_sample[FR], motor_rpm_per_sample[RL], motor_rpm_per_sample[RR]);
                         // compute pid outputs for each motor
                         pid_controller_update_all(wheel_pid, rpm_setpoints, motor_rpm_per_sample, pid_outputs); 
-                        
+                        // printf("PID outputs: FL: %f, FR: %f, RL: %f, RR: %f\n", pid_outputs[FL], pid_outputs[FR], pid_outputs[RL], pid_outputs[RR]);
+
                         // write the duty cycle and pwm state to each motor
                         set_motor_pwm_channels(pid_outputs); 
                         
