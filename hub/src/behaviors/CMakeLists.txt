@@ -27,6 +27,8 @@ add_library(behaviors_nodes STATIC
   src/finger_node.cpp
   src/report_color_node.cpp
   src/start_node.cpp
+  src/get_color_node.cpp
+  src/gate_node.cpp
 )
 target_include_directories(behaviors_nodes PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

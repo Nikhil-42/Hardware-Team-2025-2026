@@ -22,6 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "action/DriveToPose.action"
   "action/Start.action"
   "action/DriveWithVel.action"
+  "action/GetColor.action"
   DEPENDENCIES # Add packages that above messages depend on
   geometry_msgs
   nav_msgs

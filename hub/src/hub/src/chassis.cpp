@@ -151,8 +151,8 @@ class Chassis : public rclcpp::Node
             buffer[0] = 0x11;
             buffer[1] = 0x11;
             buffer[2] = anntena_code | color_code;
+            buffer[3] = 0xDD;
             buffer[4] = 0xDD;
-            buffer[5] = 0xDD;
 
 
             ssize_t n = -1;

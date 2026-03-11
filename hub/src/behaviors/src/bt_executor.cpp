@@ -20,6 +20,8 @@
 #include "behaviors/drive_to_pose_node.hpp"
 #include "behaviors/report_color_node.hpp"
 #include "behaviors/start_node.hpp"
+#include "behaviors/get_color_node.hpp"
+#include "behaviors/gate_node.hpp"
 
 // Example that shows how to customize TreeExecutionServer.
 //
@@ -65,6 +67,16 @@ public:
     report_color_params.nh = node();                 // the rclcpp::Node::SharedPtr
     report_color_params.server_timeout = std::chrono::seconds(10);
     factory.registerNodeType<ReportColorNode>("ReportColor", report_color_params);
+
+    BT::RosNodeParams get_color_params;
+    get_color_params.nh = node();
+    get_color_params.server_timeout = std::chrono::seconds(10);
+    factory.registerNodeType<GetColorNode>("GetColor", get_color_params);
+
+    BT::RosNodeParams gate_params;
+    gate_params.nh = node();
+    gate_params.server_timeout = std::chrono::seconds(10);
+    factory.registerNodeType<GateNode>("GateNode", gate_params);
   }
 
   void onTreeCreated(BT::Tree& tree) override

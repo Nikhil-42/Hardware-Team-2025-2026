@@ -14,7 +14,7 @@ public:
     static PortsList providedPorts()
     {
         return providedBasicPorts({
-            InputPort<std::string>("server_name", "/drive_to_pose"),
+            InputPort<std::string>("action_name", "/drive_to_pose"),
             InputPort<double>("x"),
             InputPort<double>("y"),
             InputPort<double>("yaw"),

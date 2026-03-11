@@ -64,7 +64,9 @@ class DriveWithVelServer : public rclcpp::Node
 		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
 		geometry_msgs::msg::Twist current_vel_;
-		double max_duration = 5.0;
+
+		//optional timeout
+		//double max_duration = 5.0;
 
 		void execute(const std::shared_ptr<GoalHandleDWV> goal_handle)
 		{
@@ -97,13 +99,15 @@ class DriveWithVelServer : public rclcpp::Node
 				goal_handle->publish_feedback(feedback);
 				loop_rate.sleep();
 
-				if ((now() - start_time).seconds() > max_duration)
+				/* Timeout
+		 		if ((now() - start_time).seconds() > max_duration)
 				{
 				    kill_robot();
 				    result->success = true;
 				    goal_handle->succeed(result);
 				    return;
 				}
+				*/
 			}
 		}
 
@@ -114,6 +118,7 @@ class DriveWithVelServer : public rclcpp::Node
 			cmd_vel.linear.y = 0;
 			cmd_vel.angular.z = 0;
 
+			//send multiple commands to ensure robot sees it
 			for(int i = 0; i < 5; i++)
 			{
 				cmd_vel_pub_->publish(cmd_vel);

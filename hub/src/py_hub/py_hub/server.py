@@ -28,14 +28,14 @@ class ManipulationService(Node):
         self.start_button_actsrv = ActionServer(self, Start, 'start_button', self.start_button_callback, cancel_callback=lambda req: CancelResponse.ACCEPT, callback_group=self._action_cb_group)
         
         self.start_button = Button(21, pull_up=True, bounce_time=0.1)
-        self.enable_pin = LED(18)
+        self.enable_pin = LED(27)
         self.enable_pin.off()
         
         self.finger_motors = [
-            Motor(23, 24),  # Finger 1
-            Motor(12, 25),   # Finger 2
-            Motor(4, 17),   # Finger 3
-            Motor(22, 27),  # Finger 4
+            Motor(5, 6),  # Finger 1
+            Motor(16, 26),   # Finger 2
+            Motor(8, 11),   # Finger 3
+            Motor(9, 10),  # Finger 4
         ]
 
         self.finger_map = {
@@ -46,8 +46,8 @@ class ManipulationService(Node):
         }
 
         self.gate_servos = [
-            Servo(5, min_pulse_width=0.0006, max_pulse_width=0.0014),  # Gate 1
-            Servo(6, min_pulse_width=0.0016, max_pulse_width=0.0024),  # Gate 2
+            Servo(12, min_pulse_width=0.0006, max_pulse_width=0.0014),  # Gate 1
+            Servo(13, min_pulse_width=0.0016, max_pulse_width=0.0024),  # Gate 2
         ]
 
         self.colors = ["?", "?", "?", "?"]

@@ -1,7 +1,7 @@
 <root BTCPP_format="4">
 
   <BehaviorTree ID="ReportColorTest">
-    <Repeat num_cycles="-1">
+    <Repeat num_cycles="5">
       <Sequence>
         <ReportColor service_name="report_ir" antenna="1" color="82"/>
         <ReportColor service_name="report_ir" antenna="2" color="82"/>
@@ -14,6 +14,16 @@
         <ReportColor service_name="report_lcd" antenna="4" color="82"/>
       </Sequence>
     </Repeat>
+  </BehaviorTree>
+
+  <BehaviorTree ID = "GetReportColorTest">
+    <Sequence>
+      <RetryUntilSuccessful num_attempts ="3">
+        <GetColorNode color ="{antenna1_color}"/>
+      </RetryUntilSuccessful>
+      
+      <ReportColor service_name="report_lcd" antenna ="1" color ="{antenna1_color}"/>
+    </Sequence>
   </BehaviorTree>
 
   <BehaviorTree ID="FingerTest">
