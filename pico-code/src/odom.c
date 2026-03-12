@@ -24,9 +24,9 @@ void odom_update(pose_t* pose)
         }
         //printf("\n");
         // calculate displacements 
-        float dx = ( ds[FL] + ds[FR] + ds[RL] + ds[RR]) / 4.0f;
-        float dy = (-ds[FL] + ds[FR] + ds[RL] - ds[RR]) / 4.0f;
-        float dtheta = (-ds[FL] + ds[FR] - ds[RL] + ds[RR]) / (4.0f * (Lx + Ly));
+        float dx = ( -ds[FL] + ds[FR] - ds[RL] + ds[RR]) / 4.0f;
+        float dy = (ds[FL] + ds[FR] - ds[RL] - ds[RR]) / 4.0f;
+        float dtheta = (ds[FL] + ds[FR] + ds[RL] + ds[RR]) / (4.0f * (Lx + Ly));
  
         // rotate   
         pose->x += dx * (float)cos((double)pose->theta) - dy * (float)sin((double)pose->theta);

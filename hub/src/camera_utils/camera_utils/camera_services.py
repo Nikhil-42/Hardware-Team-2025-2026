@@ -164,7 +164,7 @@ class CameraServicesNode(Node):
         # Wait for frame
         success = False
         img = image_queue.get()
-        color = self.get_color(img, goal_handle)
+        color = self.detect_led_color(img)
         while not goal_handle.is_cancel_requested:
             if color != 0:
                 self.get_logger().info(f"Antenna Color Found something something")
@@ -173,7 +173,7 @@ class CameraServicesNode(Node):
             else:
                 self.get_logger().info(f"Antenna Color no find something something")
                 img = image_queue.get()
-                color = self.get_color(img, goal_handle)
+                color = self.detect_led_color(img)
         else:
             goal_handle.abort()
             self.get_logger().info("get color action canceled")
@@ -192,114 +192,127 @@ class CameraServicesNode(Node):
         response.color = int(color)
         return response
 
-    def get_color(self, img, goal_handle):
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(gray, 250, 255, cv2.THRESH_BINARY)
-        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    def detect_led_color(self, img, color_threshold=None, blue_green_ratio=None):
+        # if color_threshold is None or blue_green_ratio is None:
+        #     ct, bgr = load_config()
+        #     color_threshold  = color_threshold  or ct
+        #     blue_green_ratio = blue_green_ratio or bgr
         
-        masked_img = img
+        color_threshold = 33.5
+        blue_green_ratio = 1.33
 
-        if contours:
-            # Find the largest contour
-            largest_contour = max(contours, key=cv2.contourArea)
+        # --- Step 1: Find the brightest spot to confirm LED is on ---
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray_blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        _, max_val, _, max_loc = cv2.minMaxLoc(gray_blur)
+        # print(f"Peak brightness: {max_val} at {max_loc}")
 
-            # Calculate Moments for the largest contour
-            M = cv2.moments(largest_contour)
-
-            # Calculate x,y coordinates of the centroid
-            if M["m00"] != 0:
-                cX = int(M["m10"] / M["m00"])
-                cY = int(M["m01"] / M["m00"])
-
-
-                (x, y), radius = cv2.minEnclosingCircle(largest_contour)
-                center = (int(x), int(y))
-                mask = np.zeros(img.shape[:2], dtype=np.uint8)
-                cv2.circle(mask, center, int(radius + 50), 255, -1)
-
-                masked_img = cv2.bitwise_and(img, img, mask=mask)
-            else:
-                self.get_logger().info("No contour found")
-                return 0
-                # goal_handle.abort()
-
-        # masked_img_n = np.array(masked_img)
-
-        # B = masked_img[:,:,0]
-        # G = masked_img[:,:,1]
-        # R = masked_img[:,:,2]
-        B, G, R = cv2.split(masked_img)
-
-        # Remove black pixels
-        not_black = ~((B <= 20) & (G <= 20) & (R <= 20))
-
-        # Remove White Pixels
-        not_white = ~((B >= 200) & (G >= 200) & (R >= 200))
-
-        mask = not_black & not_white
-
-        mask_uint8 = (mask.astype(np.uint8)) * 255
-
-        if np.count_nonzero(mask) < 50:
-            self.get_logger().info("Bad mask")
+        # --- Step 2: Check if LED is OFF ---
+        if max_val < 80:
+            # print("Result: LED is OFF (no bright spot detected)")
             return 0
 
-        masked_pixels = masked_img[mask_uint8 > 0]
+        # --- Step 3: Threshold to find white blob, use its CENTROID as center ---
+        _, bright_mask = cv2.threshold(gray_blur, 240, 255, cv2.THRESH_BINARY)
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(bright_mask)
 
-        # 3. Calculate the Average B, G, and R
-        # Using the mean of only the masked pixels
-        avg_bgr = np.mean(masked_pixels, axis=0)
-        avg_b = avg_bgr[0]
-        avg_g = avg_bgr[1]
-        avg_r = avg_bgr[2]
+        bx, by = max_loc
+        cx, cy = bx, by
+        blob_radius = 1
 
-        # 4. The "Purple vs Blue" logic
-        # Purple has a high Blue AND a significant Red component.
-        # Blue has a high Blue but very low Red.
+        for i in range(1, num_labels):
+            x, y, w, h, area = stats[i]
+            if x <= bx <= x + w and y <= by <= y + h:
+                cx, cy = int(centroids[i][0]), int(centroids[i][1])
+                blob_radius = int(np.sqrt(area / np.pi))
+                # print(f"Blob centroid: ({cx}, {cy}), area: {area}px, effective radius: {blob_radius}px")
+                break
+            
+        if blob_radius < 7:
+            self.get_logger().info(f"blob_radius: {blob_radius}")
+            return 0
 
-        # Calculate Red-to-Blue ratio
-        rb_ratio = avg_r / (avg_b + 1e-5) # avoid division by zero
+        inner_radius = blob_radius + 5
+        outer_radius = inner_radius + 30
+        # print(f"Sampling ring: inner={inner_radius}px, outer={outer_radius}px")
 
-        # 5. Categorize based on Hue and Ratios
-        # We'll convert the average BGR to HSV for the primary hue check
-        avg_pixel_bgr = np.uint8([[avg_bgr]])
-        avg_hsv = cv2.cvtColor(avg_pixel_bgr, cv2.COLOR_BGR2HSV)[0][0]
+        # --- Step 4: Sample an annular ring around the centroid ---
+        h_img, w_img = img.shape[:2]
+        Y, X = np.ogrid[:h_img, :w_img]
+        dist = np.sqrt((X - cx)**2 + (Y - cy)**2)
+        ring_mask = (dist >= inner_radius) & (dist <= outer_radius)
+        ring_pixels = img[ring_mask]
 
-        h = avg_hsv[0] # Hue
-        s = avg_hsv[1] # Saturation
-        v = avg_hsv[2] # Value/Brightness
+        if len(ring_pixels) == 0:
+            # print("Result: LED is OFF or too dim")
+            return 0
 
+        # --- Step 5: Average the color in the ring ---
+        avg_bgr = ring_pixels.mean(axis=0)
         b, g, r = avg_bgr
+        # print(f"Average BGR in ring: B={b:.1f}, G={g:.1f}, R={r:.1f}")
 
-        # 2. Logic for Green vs. Aquamarine vs. Blue
+        # --- Step 6: Remove white baseline to isolate true color signal ---
+        self.get_logger().info(f"red: {r} green: {g} blue: {b}")
+        white_baseline = min(r, g, b)
+        cr = r - white_baseline
+        cg = g - white_baseline
+        cb = b - white_baseline
+        # print(f"After white removal: cR={cr:.1f}, cG={cg:.1f}, cB={cb:.1f}")
+
+        # --- Step 7: Classify ---
+        r_on = cr > color_threshold/2
+        g_on = cg > color_threshold
+        b_on = cb > color_threshold
+
+        self.get_logger().info(f"red: {cr} green: {cg} blue: {cb}")
         
-        # Check for Green/Aquamarine first
-        if 40 <= h <= 105:
-            # If Hue is > 85, it's leaning blue (Aquamarine)
-            if h > 85:
-                # Check if Green is still significantly higher than Blue
-                if g > b:
-                    # return "Aquamarine/Light Green"
-                    return ord('G')
-                else:
-                    # return "Light Blue"
-                    return ord('B')
-            return ord('G')
+        found = False
 
-        # 3. Check for Blue vs. Purple
-        if 105 < h <= 135:
-            # Check Red-to-Blue ratio for Purple as discussed before
-            if r / (b + 1e-5) > 0.5:
-                return ord('P')
-            return ord('B')
+        if not r_on and not g_on and not b_on:
+            color = 0
+        elif g_on and b_on:
+            # Blue LED bleeds green — use ratio to distinguish
+            self.get_logger().info("Found Blue Green")
+            color = ord('B') if cb > cg * blue_green_ratio else ord('G')
+            found = True
+        elif g_on:
+            self.get_logger().info("Found Green")
+            color = ord('G')
+            found = True
+        elif r_on and b_on:
+            self.get_logger().info("Found Red Blue")
+            color = ord('P')
+            found = True
+        elif r_on:
+            self.get_logger().info("Found Red")
+            color = ord('R')
+            found = True
+        elif b_on:
+            self.get_logger().info("Found Blue")
+            color = ord('B')
+            found = True
+        else:
+            # dominant = np.argmax([cr, cg, cb])
+            color = 0
+            # color = ["red", "green", "blue"][dominant] + " (ambiguous)"
 
-        # 4. Check for Red
-        if h <= 15 or h >= 160:
-            return ord('R')
+        # print(f"Result: LED color is → {color.upper()}")
 
-        # goal_handle.abort()
-        self.get_logger().info("No color detected")
-        return 0
+        # --- Step 8: Annotate and save debug image ---
+        if (found):
+            debug = img.copy()
+            cv2.circle(debug, (cx, cy), inner_radius, (0, 255, 255), 2)
+            cv2.circle(debug, (cx, cy), outer_radius, (0, 255, 0), 2)
+            cv2.circle(debug, (cx, cy), 3, (255, 0, 255), -1)
+            # cv2.putText(debug, color.upper(), (cx + outer_radius + 5, cy),
+            #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            cv2.imwrite("/home/ieee/Hardware-Team-2025-2026/hub/src/debug_led.png", debug)
+            self.get_logger().info("Debug image saved to debug_led.png")
+
+        # print(f"Color: {color}")
+
+        return color
 
 
 def main(args=None):

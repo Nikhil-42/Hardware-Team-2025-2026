@@ -32,17 +32,17 @@ class ManipulationService(Node):
         self.enable_pin.off()
         
         self.finger_motors = [
-            Motor(5, 6),  # Finger 1
+            Motor(6, 5),  # Finger 1
             Motor(16, 26),   # Finger 2
-            Motor(8, 11),   # Finger 3
-            Motor(9, 10),  # Finger 4
+            Motor(11, 8),   # Finger 3
+            Motor(10, 9),  # Finger 4
         ]
 
         self.finger_map = {
-            3: 0,
-            7: 2,
+            3: 2,
+            7: 3,
             8: 1,
-            -1: 3,
+            -1: 0,
         }
 
         self.gate_servos = [
