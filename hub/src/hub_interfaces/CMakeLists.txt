@@ -19,6 +19,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Gate.srv"
   "srv/Enable.srv"
   "srv/ReportColor.srv"
+  "srv/SetMapPose.srv"
   "action/DriveToPose.action"
   "action/Start.action"
   "action/DriveWithVel.action"

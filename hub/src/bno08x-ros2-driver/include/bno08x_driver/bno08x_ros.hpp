@@ -54,5 +54,11 @@ private:
     bool publish_orientation_;
     bool publish_acceleration_;
     bool publish_angular_velocity_;
+
+    std::array<double, 9> orientation_cov_;
+    std::array<double, 9> angular_vel_cov_;
+    std::array<double, 9> linear_accel_cov_;
 };
+
+
 

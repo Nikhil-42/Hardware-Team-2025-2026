@@ -1,0 +1,7 @@
+# Request: known map-frame pose of the landmark the robot has reached
+geometry_msgs/Pose known_map_pose
+
+---
+
+# Response
+bool success

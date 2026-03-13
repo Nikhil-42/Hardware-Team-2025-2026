@@ -11,6 +11,10 @@
 
 #include "hub/pid.hpp"
 
+#include "tf2/utils.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.hpp"
+
 class DriveToPoseServer : public rclcpp::Node
 {
 
@@ -28,16 +32,10 @@ class DriveToPoseServer : public rclcpp::Node
 		{
 			cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
 
-			auto odom_callback = [this](nav_msgs::msg::Odometry odom) -> void
-			{
-				current_x_ = odom.pose.pose.position.x;
-				current_y_ = odom.pose.pose.position.y;
-				const auto q = odom.pose.pose.orientation;
-
-				//converting from quaternion to tait-bryan angles
-				current_yaw_ = std::atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
-			};
-			odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("odometry/filtered", 10, odom_callback);
+			// initialize tf2 buffer and listener for map -> base_link lookups
+			tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+			tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+			// pose is polled in execute so no need for odom sub
 
 			auto handle_goal = [this](const rclcpp_action::GoalUUID & uuid,
 				std::shared_ptr<const DriveToPose::Goal> goal)
@@ -76,8 +74,10 @@ class DriveToPoseServer : public rclcpp::Node
 	private:
 		rclcpp_action::Server<DriveToPose>::SharedPtr action_server_;
 		rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 		rclcpp::TimerBase::SharedPtr timer_;
+
+		std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+		std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
 		double current_x_ = 0.0;
 		double current_y_ = 0.0;
@@ -114,6 +114,22 @@ class DriveToPoseServer : public rclcpp::Node
 					kill_robot();
 					goal_handle->canceled(result);
 					return;
+				}
+
+				// look up current pose from map -> base_link TF transform
+				try
+				{
+					// base link's pose in map frame. Need to transform to base link
+					auto transform = tf_buffer_->lookupTransform("map", "base_link", tf2::TimePointZero);
+					current_x_ = transform.transform.translation.x;
+					current_y_ = transform.transform.translation.y;
+					current_yaw_ = tf2::getYaw(transform.transform.rotation);
+				}
+				catch (const tf2::TransformException &ex)
+				{
+					RCLCPP_WARN(this->get_logger(), "TF lookup failed: %s", ex.what());
+					loop_rate.sleep();
+					continue;
 				}
 
 				auto current_time = now();

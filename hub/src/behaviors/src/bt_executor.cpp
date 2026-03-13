@@ -22,6 +22,7 @@
 #include "behaviors/start_node.hpp"
 #include "behaviors/get_color_node.hpp"
 #include "behaviors/gate_node.hpp"
+#include "behaviors/map_correction_node.hpp"
 
 // Example that shows how to customize TreeExecutionServer.
 //
@@ -76,7 +77,12 @@ public:
     BT::RosNodeParams gate_params;
     gate_params.nh = node();
     gate_params.server_timeout = std::chrono::seconds(10);
-    factory.registerNodeType<GateNode>("GateNode", gate_params);
+    factory.registerNodeType<GateNode>("Gate", gate_params);
+
+    BT::RosNodeParams map_correction_params;
+    map_correction_params.nh = node();
+    map_correction_params.server_timeout = std::chrono::seconds(10);
+    factory.registerNodeType<MapCorrectionNode>("MapCorrection", map_correction_params);
   }
 
   void onTreeCreated(BT::Tree& tree) override
