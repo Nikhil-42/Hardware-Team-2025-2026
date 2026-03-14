@@ -36,4 +36,11 @@
       <Finger idx="-1" action="click"/>
     </Sequence>
   </BehaviorTree>
+
+  <BehaviorTree ID="CrankTest">
+    <Timeout msec="5000">
+      <Motor action_name="/crank" velocity="0.5"/>
+    </Timeout>
+  </BehaviorTree>
 </root>
+

@@ -5,9 +5,9 @@ from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from time import sleep
 from hub_interfaces.srv import Enable, Finger, Gate, ReportColor
-from hub_interfaces.action import Start
+from hub_interfaces.action import Start, Motor as MotorAct
 from py_hub.lcd_driver import LCD
-from gpiozero import LED, Motor, Servo, Button
+from gpiozero import LED, Motor, Servo, Button, PWMOutputDevice
 
 
 class ManipulationService(Node):
@@ -30,6 +30,14 @@ class ManipulationService(Node):
         self.start_button = Button(21, pull_up=True, bounce_time=0.1)
         self.enable_pin = LED(27)
         self.enable_pin.off()
+
+        self.mast_actsrv = ActionServer(self, MotorAct, 'mast', self.mast_callback, cancel_callback=lambda req: CancelResponse.ACCEPT)
+        self.crank_actsrv = ActionServer(self, MotorAct, 'crank', self.crank_callback, cancel_callback=lambda req: CancelResponse.ACCEPT)
+
+        # self.mast_motor = Motor(20, 19)
+        # self.mast_limit = Button(26, pull_up=True)
+
+        self.crank_motor = PWMOutputDevice(20)  # Using GPIO 13 for PWM control of the crank motor
         
         self.finger_motors = [
             Motor(6, 5),  # Finger 1
@@ -57,6 +65,8 @@ class ManipulationService(Node):
         self.gate_servos[1].min()
         sleep(0.5)
         self.gate_servos[0].max()
+        
+        self.lcd_display.display_string("   I'm alive!   ", self.lcd_display.LINE_1)
 
     def enable(self, request: Enable.Request, response: Enable.Response):
         if request.state:
@@ -165,6 +175,35 @@ class ManipulationService(Node):
         goal_handle.succeed()
         response = Start.Result()
         return response
+        
+    def mast_callback(self, goal_handle: ServerGoalHandle):
+        # Homing sequence
+        self.get_logger().info("Homing mast")
+        self.mast_motor.set_forward_speed(0.5)
+        while not self.mast_limit.is_pressed:
+            if goal_handle.is_cancel_requested:
+                self.mast_motor.stop()
+                goal_handle.canceled()
+                return MotorAct.Result()
+            sleep(0.1)
+        
+        self.mast_motor.stop()
+        self.get_logger().info("Mast homed")
+        goal_handle.succeed()
+        return MotorAct.Result()
+    
+    def crank_callback(self, goal_handle: ServerGoalHandle):
+        # Crank it until canceled
+        self.get_logger().info("Straight crankin' it in the hallway")
+        self.crank_motor.value = goal_handle.request.velocity
+
+        while goal_handle.is_cancel_requested == False:
+            sleep(0.1)
+
+        self.get_logger().info("Got caught crankin'. Stopping...")
+        self.crank_motor.off()
+        goal_handle.succeed()
+        return MotorAct.Result()
 
 
 def main(args=None):

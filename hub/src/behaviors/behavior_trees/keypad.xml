@@ -41,6 +41,7 @@
   <BehaviorTree ID = "GetReportColor">
     <Sequence>
       <RetryUntilSuccessful num_attempts ="3">
+        
         <GetColorNode color ="{antenna_color}"/>
         <ReportColor service_name="report_lcd" antenna ="{antenna}" color ="{antenna_color}"/>
       </RetryUntilSuccessful>
