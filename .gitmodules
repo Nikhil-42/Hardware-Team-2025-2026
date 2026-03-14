@@ -4,3 +4,6 @@
 [submodule "hub/src/BehaviorTree.ROS2"]
 	path = hub/src/BehaviorTree.ROS2
 	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
+[submodule "picoboot3"]
+	path = picoboot3
+	url = https://github.com/IndoorCorgi/picoboot3.git
