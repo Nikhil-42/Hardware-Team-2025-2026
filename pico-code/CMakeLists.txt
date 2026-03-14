@@ -65,8 +65,6 @@ target_include_directories(motor-control PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-
-# Set the linker script for picoboot3
-pico_set_linker_script(${CMAKE_PROJECT_NAME} ${CMAKE_SOURCE_DIR}/memmap_default.ld)
+pico_set_linker_script(${CMAKE_PROJECT_NAME} ${CMAKE_SOURCE_DIR}/memmap_default_rp2350.ld)
 pico_add_extra_outputs(motor-control)
 

@@ -14,6 +14,8 @@ class ManipulationService(Node):
     def __init__(self):
         super().__init__('manipulation_service')
         self.enable_srv = self.create_service(Enable, 'enable', self.enable)
+        self.picoboot_srv = self.create_service(Enable, 'picoboot3', self.uart_bootsel)
+
         # Quickly extends and retracts the specified finger
         self.click_srv = self.create_service(Finger, 'click', self.click)
         # Expels the specified finger from the hand
@@ -28,8 +30,10 @@ class ManipulationService(Node):
         self.start_button_actsrv = ActionServer(self, Start, 'start_button', self.start_button_callback, cancel_callback=lambda req: CancelResponse.ACCEPT, callback_group=self._action_cb_group)
         
         self.start_button = Button(21, pull_up=True, bounce_time=0.1)
-        self.enable_pin = LED(27)
+        self.enable_pin = LED(27, initial_value=False)
         self.enable_pin.off()
+
+        self.picoboot = LED(17, active_high=False, initial_value=True)
 
         self.mast_actsrv = ActionServer(self, MotorAct, 'mast', self.mast_callback, cancel_callback=lambda req: CancelResponse.ACCEPT)
         self.crank_actsrv = ActionServer(self, MotorAct, 'crank', self.crank_callback, cancel_callback=lambda req: CancelResponse.ACCEPT)
@@ -205,6 +209,16 @@ class ManipulationService(Node):
         goal_handle.succeed()
         return MotorAct.Result()
 
+    def uart_bootsel(self, request: Enable.Request, response: Enable.Response):
+        if request.state:
+            self.enable_pin.off()
+            self.picoboot.on()
+            self.enable_pin.on()
+        else:
+            self.enable_pin.off()
+            self.picoboot.off()
+        response.success = True
+        return response
 
 def main(args=None):
     rclpy.init(args=args)

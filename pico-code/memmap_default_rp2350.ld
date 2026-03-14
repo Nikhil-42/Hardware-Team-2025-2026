@@ -23,7 +23,7 @@
 
 MEMORY
 {
-    FLASH(rx) : ORIGIN = 0x10000000 + 32k, LENGTH = 2048k - 32k
+    FLASH(rx) : ORIGIN = 0x10000000 + 32k, LENGTH = 4096k - 32k
     RAM(rwx) : ORIGIN =  0x20000000, LENGTH = 512k
     SCRATCH_X(rwx) : ORIGIN = 0x20080000, LENGTH = 4k
     SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
@@ -112,7 +112,6 @@ SECTIONS
        from the bootrom into the user image.
     */
 
-    /*
     .boot2 : {
         __boot2_start__ = .;
         *(.boot2)
@@ -121,7 +120,6 @@ SECTIONS
 
     ASSERT(__boot2_end__ - __boot2_start__ <= 256,
         "ERROR: Pico second stage bootloader must be no more than 256 bytes in size")
-    */
 
     .rodata : {
         *(EXCLUDE_FILE(*libgcc.a: *libc.a:*lib_a-mem*.o *libm.a:) .rodata*)
@@ -229,10 +227,11 @@ SECTIONS
         __end__ = .;
         end = __end__;
         KEEP(*(.heap*))
+        /* historically on GCC sbrk was growing past __HeapLimit to __StackLimit, however
+           to be more compatible, we now set __HeapLimit explicitly to where the end of the heap is */
+        . = ORIGIN(RAM) + LENGTH(RAM);
+        __HeapLimit = .;
     } > RAM
-    /* historically on GCC sbrk was growing past __HeapLimit to __StackLimit, however
-       to be more compatible, we now set __HeapLimit explicitly to where the end of the heap is */
-    __HeapLimit = ORIGIN(RAM) + LENGTH(RAM);
 
     /* Start and end symbols must be word-aligned */
     .scratch_x : {
