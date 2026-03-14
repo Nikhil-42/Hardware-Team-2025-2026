@@ -27,7 +27,7 @@ target_include_directories(chassis PUBLIC
 target_compile_features(chassis PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 add_executable(drive_to_pose src/drive_to_pose.cpp)
-ament_target_dependencies(drive_to_pose rclcpp rclcpp_action geometry_msgs nav_msgs hub_interfaces)
+ament_target_dependencies(drive_to_pose rclcpp rclcpp_action geometry_msgs nav_msgs hub_interfaces tf2 tf2_geometry_msgs tf2_ros)
 target_include_directories(drive_to_pose PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)

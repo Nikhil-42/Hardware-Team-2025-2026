@@ -129,17 +129,21 @@ class CameraServicesNode(Node):
             self.get_logger().warn(f"cv_bridge conversion failed: {e}")
             return
         
-        with self._running:
-            for callback in self._callbacks.values():
-                try:
-                    callback(msg, frame)
-                except Exception as e:
-                    self.get_logger().warn(f"Callback raised exception: {e}")
+        with self._running: 
+            callbacks = list(self._callbacks.values())
+            
+        for callback in callbacks:
+            try:
+                callback(msg, frame)
+            except Exception as e:
+                self.get_logger().warn(f"Callback raised exception: {e}")
                     
     def read_antenna_color_execute(self, goal_handle: rclpy.action.server.ServerGoalHandle):
-        
         # Use a queue to communicate between the callback and this execution thread
-        self.get_logger().info("read_antenna_color called")
+        self.get_logger().info(f"read_antenna_color called {goal_handle.goal_id}")
+        
+        response = GetColor.Result()
+        
         image_queue = SimpleQueue()
         last_msg = None
 
@@ -158,39 +162,37 @@ class CameraServicesNode(Node):
 
             last_msg = (current_stamp, np.copy(frame))
             
-        name = f"read_antenna_color"
+        name = f"read_antenna_color_{goal_handle.goal_id}"
         self._register_callback(callback, name)
+        
+        success = True
                 
         # Wait for frame
         success = False
         img = image_queue.get()
         color = self.detect_led_color(img)
         while not goal_handle.is_cancel_requested:
-            if color != 0:
+            
+            if response.color != 0:
                 self.get_logger().info(f"Antenna Color Found something something")
                 success = True
                 break
             else:
                 self.get_logger().info(f"Antenna Color no find something something")
                 img = image_queue.get()
-                color = self.detect_led_color(img)
+                response.color = self.detect_led_color(img)
+
         else:
-            goal_handle.abort()
+            # goal_handle.abort()
             self.get_logger().info("get color action canceled")
-            
-        self._unregister_callback(name)
-        
-        if success:
-            goal_handle.succeed()
-        else:
             goal_handle.canceled()
-            
-        # return something
-        self.get_logger().info(f"Color: {color}")
-        self.get_logger().info("sending color result")
-        response = GetColor.Result()
-        response.color = int(color)
+            return response   
+           
+        self._unregister_callback(name)
+        goal_handle.succeed()
+        
         return response
+
 
     def detect_led_color(self, img, color_threshold=None, blue_green_ratio=None):
         # if color_threshold is None or blue_green_ratio is None:

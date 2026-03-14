@@ -22,11 +22,11 @@ ekf_filter_node:
                   false, false, false, # vroll, vpitch, vyaw
                   false, false, false] # ax, ay, az, aroll, apitch, ayaw
 
-    imu0: /imu
-    imu0_config: [false, false, false, # x, y, z
-                  false, false, false, # roll, pitch, yaw
-                  false, false, false, # vx, vy, vz
-                  true, true, true,    # vroll, vpitch, vyaw
-                  true, true, false]   # ax, ay, az
+#    imu0: /imu
+#    imu0_config: [false, false, false, # x, y, z
+#                  false, false, false, # roll, pitch, yaw
+#                  false, false, false, # vx, vy, vz
+#                  true, true, true,    # vroll, vpitch, vyaw
+#                  true, true, false]   # ax, ay, az
 
 # angular velocity and acceleration

@@ -31,10 +31,12 @@ def generate_launch_description():
 			output='screen',
 			parameters=[ekf_path]
 	)
-	static_tf = Node(
-		package='tf2_ros',
-		executable='static_transform_publisher',
-		arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+
+	map_odom_corrector_node = Node(
+		package = 'hub',
+		executable = 'map_odom_corrector',
+		name = 'map_odom_corrector_node',
+		output = 'screen'
 	)
 
 	chassis_node = Node(
@@ -100,7 +102,7 @@ def generate_launch_description():
 
 	return LaunchDescription([
 		# set true if running a simulation (uses system clock when false)
-		static_tf,
+		map_odom_corrector_node,
 		enable,
 		# joint_state_publisher_node,
 		robot_localization_node,

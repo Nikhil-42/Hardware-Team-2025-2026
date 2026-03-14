@@ -5,6 +5,8 @@
 #include <tf2_ros/buffer.h>
 #include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <cmath>
+
 
 #include "hub_interfaces/srv/set_map_pose.hpp"
 
@@ -29,9 +31,9 @@ public:
     MapOdomCorrector() : Node("map_odom_corrector")
     {
         // Declare parameters for known starting position on the field
-        declare_parameter("initial_x",   0.0);
-        declare_parameter("initial_y",   0.0);
-        declare_parameter("initial_yaw", 0.0);
+        declare_parameter("initial_x",   0.13795);
+        declare_parameter("initial_y",   0.123825);
+        declare_parameter("initial_yaw", M_PI);
 
         double init_x   = get_parameter("initial_x").as_double();
         double init_y   = get_parameter("initial_y").as_double();

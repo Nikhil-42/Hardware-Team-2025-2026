@@ -15,17 +15,20 @@ BNO08xROS::BNO08xROS()
     this->init_sensor();
 
 
-    orientation_cov_ = {0.0024, 0,0, 0.0,  //roll
-			      0.0, 0.0025, 0.0,  //pitch
-      			      0.0, 0.0, 0.0025}; //yaw
+    orientation_cov_.fill(0.0);
+    orientation_cov_[0] = 0.0025;
+    orientation_cov_[4] = 0.0025;
+    orientation_cov_[8] = 0.0025;
 
-    angular_vel_cov_ = {0.000436, 0.0, 0.0,  // roll rate
-		     0.0, 0.00436, 0.0,   // pitch rate
-		     0.0, 0.0, 0.000436}; // yaw rate
+	angular_vel_cov_.fill(0.0);
+    angular_vel_cov_[0] = 0.000436;
+    angular_vel_cov_[4] = 0.000436;
+    angular_vel_cov_[8] = 0.000436;
 
-    linear_accel_cov_ = {0.0196, 0.0, 0.0,  //x acceleration
-              			     0.0, 0.0196, 0.0,  //y acceleration
-			             0.0, 0.0, 0,0196}; //z acceleration
+    linear_accel_cov_.fill(0.0);
+    linear_accel_cov_[0] = 0.0196;
+    linear_accel_cov_[4] = 0.0196;
+    linear_accel_cov_[8] = 0.0196;
 
     if (publish_imu_) {
         this->imu_publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("/imu", 10);
@@ -256,9 +259,9 @@ void BNO08xROS::sensor_callback(void *cookie, sh2_SensorValue_t *sensor_value) {
 		this->imu_msg_.header.stamp.sec = this->get_clock()->now().seconds();
 		this->imu_msg_.header.stamp.nanosec = this->get_clock()->now().nanoseconds();
 		this->imu_msg_.orientation_covariance = orientation_cov_;
-		this->imu_msg_.angular_velocity_acceleration = angular_vel_cov_;
+		this->imu_msg_.angular_velocity_covariance = angular_vel_cov_;
 		this->imu_msg_.linear_acceleration_covariance = linear_accel_cov_;
-		this->imu_publisher_->publish(this->imu_msg_);x
+		this->imu_publisher_->publish(this->imu_msg_);
 		imu_received_flag_ = 0;
 	}
 
