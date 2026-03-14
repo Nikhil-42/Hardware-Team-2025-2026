@@ -4,12 +4,21 @@
     <Sequence>
       <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.50" yaw="180" angular_tolerance="2"/>
       <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.05" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+
       <Finger service_name="/click" idx="7" action="click"/>
       <Finger service_name="/click" idx="3" action="click"/>
       <Finger service_name="/click" idx="7" action="click"/>
       <Finger service_name="/click" idx="3" action="click"/>
       <Finger service_name="/click" idx="8" action="click"/>
       <Finger service_name="/click" idx="-1" action="click"/>
+
+      <RetryUntilSuccessful num_attempts=3>
+        <Timeout msec="1000">
+          <GetColorNode color = "{antenna1_color}"/>
+        </Timeout>
+      </RetryUntilSuccessful>
+      <ReportColor service_name="report_lcd" antenna=1 color="{antenna1_color}"/>
+
       <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.50" yaw="0"/>
     </Sequence>
   </BehaviorTree>
@@ -18,9 +27,18 @@
     <Sequence>
       <DriveToPose action_name="/drive_to_pose" x="0.0" y="-0.50" yaw="0"/>
       <DriveToPose action_name="/drive_to_pose" x="0.0" y="-0.90" yaw="0"/>
+
       <Finger service_name="/click" idx="8" action="click"/>
       <Finger service_name="/click" idx="8" action="click"/>
       <Finger service_name="/click" idx="8" action="click"/>
+
+      <RetryUntilSuccessful num_attempts=3>
+        <Timeout msec="1000">
+          <GetColorNode color = "{antenna2_color}"/>
+        </Timeout>
+      </RetryUntilSuccessful>
+      <ReportColor service_name="report_lcd" antenna=2 color="{antenna2_color}"/>
+
       <DriveToPose action_name="/drive_to_pose" x="0.0" y="-0.50" yaw="0"/>
     </Sequence>
   </BehaviorTree>
@@ -28,6 +46,7 @@
   <BehaviorTree ID="Full">
     <Sequence>
       <SubTree ID="WaitForStart"/>
+      <SubTree ID="CrankMast"/>
       <SubTree ID="Keypad"/>
       <SubTree ID="Button"/>
     </Sequence>
@@ -38,6 +57,37 @@
       <Start action_name="/start_button"/>
       <Start action_name="/start_light"/>
     </Parallel>
+  </BehaviorTree>
+
+  <BehaviorTree ID = "CrankMast">
+	  <Sequence>
+		  <Start action_name="/mast" velocity="0.0">
+	  </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="CrankCrank">
+
+    <!-- Move to crank position -->
+    <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.50" yaw="180" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.95" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-0.84" y="-0.95" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-2.13" y="-0.95" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-2.13" y="-0.50" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-2.28" y="-0.50" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+    <DriveToPose action_name="/drive_to_pose" x="-2.28" y="-0.90" yaw="180" linear_tolerance="0.01" angular_tolerance="2"/>
+
+    <Timeout msec="5000">
+      <Motor action_name="/crank" velocity="0.5"/>
+    </Timeout>
+
+    <RetryUntilSuccessful num_attempts=3>
+      <Timeout msec="1000">
+        <GetColorNode color = "{antenna3_color}"/>
+      </Timeout>
+    </RetryUntilSuccessful>
+    <ReportColor service_name="report_lcd" antenna=3 color="{antenna3_color}"/>
+
+    <!-- Move to next position -->
   </BehaviorTree>
 
 </root>
