@@ -153,15 +153,17 @@ class DriveToPoseServer : public rclcpp::Node
 					goal_handle->succeed(result);
 					return;
 				}
-
-				// rotate errors into base_link (body_ frame)
-				double x_error_baselink = std::cos(current_yaw_) * x_error + std::sin(current_yaw_) * y_error;
-				double y_error_baselink = -std::sin(current_yaw_) * x_error + std::cos(current_yaw_) * y_error;
+				
 
 				geometry_msgs::msg::Twist cmd_vel;
-				cmd_vel.linear.x = PID_x_.compute(x_error_baselink, dt);
-				cmd_vel.linear.y = PID_y_.compute(y_error_baselink, dt);
-				cmd_vel.angular.z = PID_yaw_.compute(yaw_error, dt);
+				double cmd_x_map = PID_x_.compute(x_error, dt);
+				double cmd_y_map = PID_y_.compute(y_error, dt);
+				double cmd_yaw_map = PID_yaw_.compute(yaw_error, dt);
+
+				// transform cmd_vel from map frame to base_link frame
+				cmd_vel.linear.x = std::cos(current_yaw_) * cmd_x_map + std::sin(current_yaw_) * cmd_y_map;
+				cmd_vel.linear.y = -std::sin(current_yaw_) * cmd_x_map + std::cos(current_yaw_) * cmd_y_map;
+				cmd_vel.angular.z = cmd_yaw_map;
 
 				cmd_vel_pub_->publish(cmd_vel);
 				//RCLCPP_INFO(this->get_logger(), "Published /cmd_vel from server");

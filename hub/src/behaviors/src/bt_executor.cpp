@@ -11,8 +11,13 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#include <iostream>
+#include <fstream>
+#include <rclcpp/rclcpp.hpp>
 #include <rclcpp/executors.hpp>
 #include <behaviortree_ros2/tree_execution_server.hpp>
+#include <behaviortree_cpp/bt_factory.h>
+#include <behaviortree_cpp/xml_parsing.h>
 #include <behaviortree_cpp/loggers/bt_cout_logger.h>
 #include <std_msgs/msg/float32.hpp>
 
@@ -89,6 +94,17 @@ public:
     motor_params.nh = node();
     motor_params.server_timeout = std::chrono::seconds(10);
     factory.registerNodeType<MotorNode>("Motor", motor_params);
+
+    std::string xml_models = BT::writeTreeNodesModelXML(factory);
+    // RCLCPP_INFO(rclcpp::get_logger(), "Registered the following nodes into the factory:\n%s", xml_models.c_str());
+
+    // Save to file
+    auto xml_file = std::ofstream("/home/ieee/tree_nodes_model.xml");
+    if(xml_file.is_open())
+    {
+      xml_file << xml_models;
+      xml_file.close();
+    }
   }
 
   void onTreeCreated(BT::Tree& tree) override
