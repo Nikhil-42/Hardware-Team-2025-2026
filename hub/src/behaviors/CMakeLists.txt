@@ -30,6 +30,7 @@ add_library(behaviors_nodes STATIC
   src/get_color_node.cpp
   src/gate_node.cpp
   src/map_correction_node.cpp
+  src/motor_node.cpp
 )
 target_include_directories(behaviors_nodes PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
